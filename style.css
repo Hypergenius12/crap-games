@@ -14,9 +14,9 @@ body, html {
     top: 0;
     left: 0;
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     z-index: 0;
-    pointer-events: auto; /* let it interact with mouse */
+    pointer-events: none;
 }
 
 #content {
@@ -25,13 +25,18 @@ body, html {
     max-width: 900px;
     margin: 0 auto;
     padding: 60px 20px;
-    pointer-events: none; /* let mouse pass through to canvas when not hovering cards */
 }
 
 header {
     text-align: center;
     margin-bottom: 60px;
-    pointer-events: auto;
+    position: relative;
+}
+
+.top-bar {
+    position: absolute;
+    top: -40px;
+    right: 0;
 }
 
 h1 {
@@ -67,7 +72,6 @@ main {
     display: flex;
     flex-direction: column;
     gap: 40px;
-    pointer-events: auto;
 }
 
 .game-card {
@@ -96,7 +100,7 @@ main {
 
 .card-image img {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     object-fit: cover;
     display: block;
     filter: grayscale(80%) contrast(1.2);
@@ -113,7 +117,7 @@ main {
     top: 0;
     left: 0;
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     background: linear-gradient(90deg, transparent, rgba(15, 15, 15, 0.9));
 }
 
@@ -169,24 +173,24 @@ main {
         background: linear-gradient(0deg, rgba(15, 15, 15, 0.9), transparent);
     }
 }
+
 footer {
     text-align: center;
     margin-top: 80px;
     padding-top: 30px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    pointer-events: auto;
 }
 
 .share-btn {
     background: transparent;
     color: #4ade80;
     border: 1px dashed #4ade80;
-    padding: 10px 20px;
+    padding: 6px 12px;
     font-family: 'JetBrains Mono', monospace;
     text-transform: uppercase;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-bottom: 20px;
 }
 
 .share-btn:hover {
