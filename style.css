@@ -1,0 +1,171 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #050505;
+    color: #e0e0e0;
+    font-family: 'JetBrains Mono', monospace;
+    overflow-x: hidden;
+}
+
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: auto; /* let it interact with mouse */
+}
+
+#content {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    pointer-events: none; /* let mouse pass through to canvas when not hovering cards */
+}
+
+header {
+    text-align: center;
+    margin-bottom: 60px;
+    pointer-events: auto;
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #888;
+    margin: 0;
+}
+
+.subtitle a {
+    color: #4ade80;
+    text-decoration: none;
+    border-bottom: 1px dashed #4ade80;
+    transition: all 0.2s;
+}
+
+.subtitle a:hover {
+    color: #22c55e;
+    border-bottom: 1px solid #22c55e;
+    text-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    pointer-events: auto;
+}
+
+.game-card {
+    display: flex;
+    background: rgba(15, 15, 15, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(74, 222, 128, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(74, 222, 128, 0.1);
+}
+
+.card-image {
+    flex: 1;
+    min-width: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(80%) contrast(1.2);
+    transition: filter 0.5s ease, transform 0.5s ease;
+}
+
+.game-card:hover .card-image img {
+    filter: grayscale(0%) contrast(1);
+    transform: scale(1.05);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(15, 15, 15, 0.9));
+}
+
+.card-info {
+    flex: 1.5;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-info h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+.card-info p {
+    color: #aaa;
+    line-height: 1.6;
+    margin: 0 0 25px 0;
+    font-size: 0.95rem;
+}
+
+.play-btn {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 10px 24px;
+    background: transparent;
+    color: #4ade80;
+    border: 1px solid #4ade80;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+}
+
+.play-btn:hover {
+    background: #4ade80;
+    color: #000;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+}
+
+@media (max-width: 768px) {
+    .game-card {
+        flex-direction: column;
+    }
+    .card-image {
+        min-height: 200px;
+    }
+    .overlay {
+        background: linear-gradient(0deg, rgba(15, 15, 15, 0.9), transparent);
+    }
+}
