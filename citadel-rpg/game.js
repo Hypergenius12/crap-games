@@ -1,291 +1,413 @@
-const world = {
-    "entrance": {
-        name: "The Obsidian Gates",
-        desc: "You stand before the colossal iron doors of the Blackwood Citadel. The air is cold and smells of ozone.",
-        x: 0, y: 0, w: 6, h: 4, z: 0,
-        exits: { n: "grand_hall", w: "guard_house" },
-        items: [{ id: "brass_key", name: "Brass Key", desc: "A heavy, ornate key with a wolf's head insignia." }]
-    },
-    "guard_house": {
-        name: "Guardhouse",
-        desc: "A small, dilapidated room littered with rusted armor. A skeleton slumps over a dusty table.",
-        x: -4, y: 0, w: 4, h: 3, z: 0,
-        exits: { e: "entrance" },
-        features: [
-            { type: "table", x: 1, y: 1, w: 2, h: 1 },
-            { type: "bed", x: 0.5, y: 0.5, w: 1, h: 2 }
-        ],
-        items: [{ id: "tinderbox", name: "Tinderbox", desc: "Flint and steel. Still functional." }]
-    },
-    "grand_hall": {
-        name: "The Grand Hall",
-        desc: "A cavernous room supported by fluted pillars. A massive chandelier has crashed into the center of the floor.",
-        x: -2, y: -6, w: 10, h: 6, z: 0,
-        locked: true, requiredKey: "Brass Key",
-        exits: { s: "entrance", w: "dining_hall", e: "library", n: "stairwell_up" },
-        features: [
-            { type: "carpet", x: 3, y: 0, w: 4, h: 6 }
-        ]
-    },
-    "dining_hall": {
-        name: "Dining Hall",
-        desc: "A long table stretches across the room, set with rotting food. The fireplace is cold.",
-        x: -8, y: -6, w: 6, h: 5, z: 0,
-        exits: { e: "grand_hall", s: "kitchen" },
-        features: [
-            { type: "table", x: 1, y: 1, w: 4, h: 3 }
-        ]
-    },
-    "kitchen": {
-        name: "Servant's Kitchen",
-        desc: "Iron stoves and copper pots lie in disarray. There is a faint smell of dried blood.",
-        x: -8, y: -1, w: 4, h: 4, z: 0,
-        exits: { n: "dining_hall", d: "wine_cellar" },
-        features: [
-            { type: "stove", x: 0, y: 1, w: 1, h: 2 },
-            { type: "table", x: 2, y: 1, w: 1, h: 2 }
-        ]
-    },
-    "library": {
-        name: "The Scholar's Atrium",
-        desc: "Thousands of books line the walls. Many have fallen to the floor. There is a locked door to the east with a strange mechanism.",
-        x: 8, y: -6, w: 5, h: 7, z: 0,
-        exits: { w: "grand_hall", e: "secret_study" },
-        features: [
-            { type: "bookshelf", x: 0, y: 0, w: 5, h: 1 },
-            { type: "bookshelf", x: 0, y: 6, w: 5, h: 1 },
-            { type: "desk", x: 2, y: 3, w: 2, h: 1 }
-        ]
-    },
-    "secret_study": {
-        name: "Hidden Study",
-        desc: "A cramped, windowless room. The walls are covered in frantic charcoal drawings of a shifting maze.",
-        x: 13, y: -4, w: 3, h: 3, z: 0,
-        locked: true, passcode: "492",
-        exits: { w: "library", d: "deep_archives" },
-        features: [
-            { type: "desk", x: 0.5, y: 0.5, w: 2, h: 1 }
-        ],
-        items: [{ id: "moon_medallion", name: "Moon Medallion", desc: "A silver disk cold to the touch. Needed to access the Royal Gardens." }]
-    },
-    
-    // BASEMENT (z = -1)
-    "wine_cellar": {
-        name: "Wine Cellar",
-        desc: "Damp and claustrophobic. Massive oak casks line the walls. A passageway leads deeper into the earth.",
-        x: -8, y: -1, w: 6, h: 5, z: -1,
-        exits: { u: "kitchen", e: "crypt" }
-    },
-    "crypt": {
-        name: "Family Crypt",
-        desc: "Stone sarcophagi sit in solemn silence. The air is deathly still.",
-        x: -2, y: 0, w: 6, h: 5, z: -1,
-        exits: { w: "wine_cellar", e: "deep_archives" }
-    },
-    "deep_archives": {
-        name: "Deep Archives",
-        desc: "Rows of ancient scrolls, mostly reduced to dust. A spiral staircase goes up.",
-        x: 12, y: -4, w: 5, h: 5, z: -1,
-        exits: { w: "crypt", u: "secret_study" }
-    },
-
-    // SECOND FLOOR (z = 1)
-    "stairwell_up": {
-        name: "Grand Staircase",
-        desc: "A sweeping marble staircase ascending to the second floor. A stained glass window depicts a wolf howling at the moon.",
-        x: -2, y: -10, w: 4, h: 4, z: 0,
-        exits: { s: "grand_hall", u: "upper_landing" }
-    },
-    "upper_landing": {
-        name: "Upper Landing",
-        desc: "You are on the second floor. Corridors branch left and right. Ahead is a heavy oak door.",
-        x: -2, y: -10, w: 4, h: 4, z: 1,
-        exits: { d: "stairwell_up", w: "servants_quarters", e: "royal_gardens", n: "throne_room" }
-    },
-    "servants_quarters": {
-        name: "Servants Quarters",
-        desc: "Rows of narrow beds. The ceiling has caved in on the far side.",
-        x: -8, y: -10, w: 6, h: 4, z: 1,
-        exits: { e: "upper_landing" },
-        features: [
-            { type: "bed", x: 1, y: 0, w: 1, h: 2 },
-            { type: "bed", x: 3, y: 0, w: 1, h: 2 },
-            { type: "bed", x: 5, y: 0, w: 1, h: 2 }
-        ],
-        items: [{ id: "rope", name: "Coil of Rope", desc: "Sturdy hemp rope." }]
-    },
-    "royal_gardens": {
-        name: "Glasshouse Gardens",
-        desc: "An indoor arboretum. The glass roof is shattered, letting in pale moonlight. Overgrown vines choke the pathways.",
-        x: 2, y: -14, w: 8, h: 8, z: 1,
-        locked: true, requiredKey: "Moon Medallion",
-        exits: { w: "upper_landing", n: "observatory" },
-        features: [
-            { type: "fountain", x: 3, y: 3, w: 2, h: 2 }
-        ]
-    },
-    "observatory": {
-        name: "The Observatory",
-        desc: "A massive brass telescope points towards the sky. Star charts cover every surface.",
-        x: 4, y: -19, w: 4, h: 5, z: 1,
-        shape: 'circle',
-        exits: { s: "royal_gardens" }
-    },
-    "throne_room": {
-        name: "The Obsidian Throne",
-        desc: "A majestic hall. A throne carved from a single piece of black glass sits at the far end. There is a locked door behind it.",
-        x: -3, y: -18, w: 6, h: 8, z: 1,
-        exits: { s: "upper_landing", n: "high_keep" },
-        features: [
-            { type: "carpet", x: 2, y: 1, w: 2, h: 6 },
-            { type: "altar", x: 2.5, y: 0.5, w: 1, h: 1 }
-        ]
-    },
-
-    // TOWER (z = 2)
-    "high_keep": {
-        name: "The High Keep",
-        desc: "You have reached the highest tower. The wind howls through the arrow slits. You feel you are near the end of your journey.",
-        x: -2, y: -22, w: 4, h: 4, z: 2,
-        locked: true, passcode: "STARS",
-        exits: { s: "throne_room" }
-    }
+// --- ITEM DATABASE (LORE & CLUES) ---
+const itemsDB = {
+    "Rusty Key": "A heavy iron key covered in flaking red rust. The teeth are jagged and uneven.",
+    "Enchanted Goblet": "A perfectly polished silver goblet. It is ice cold to the touch and hums faintly.",
+    "Heavy Cleaver": "A massive butcher's tool. The blade is nicked but still razor sharp.",
+    "Rope": "A fifty-foot coil of sturdy hemp rope. Smells strongly of tar.",
+    "Torch": "A wooden brand wrapped in pitch-soaked rags. It burns with a steady, bright flame.",
+    "Crowbar": "A solid iron prybar. Perfect for forcing open sealed crates or jammed doors.",
+    "Brass Key": "A small, ornate brass key with a falcon crest on the bow.",
+    "Lord's Journal": "A leather-bound journal. The final entry reads: 'The Chapel must be sealed. The code is the year the Citadel was founded: 1472.'",
+    "Guard's Note": "A crumpled piece of parchment: 'I locked the Western Armory. The passcode is the exact number of armor suits standing in the Upper Hallway.'",
+    "Astronomer's Log": "A dusty book: 'Point the telescope at the constellation of the Serpent to reveal the truth.'",
+    "Healing Potion": "A small glass vial filled with glowing red liquid. It smells like cinnamon.",
+    "Iron Ring": "A heavy iron ring taken from a skeleton. It has strange runes etched into it.",
+    "Ancient Coin": "A gold coin from an empire that fell thousands of years ago.",
+    "Golden Chalice": "A priceless artifact stolen from the royal treasury.",
+    "Crown Jewel (Secret)": "The legendary Blackwood Diamond. It is as big as a fist and perfectly cut.",
+    "Silver Bell": "A small silver bell. Ringing it produces no sound. The base is shaped strangely, like a key.",
+    "Sword of Light (Secret)": "A blade forged from pure, solidified light. It weighs almost nothing.",
+    "Star Map": "A map of the night sky. The Serpent constellation is marked with the coordinates: 4-2-9.",
+    "Tomb Key": "A heavy stone key carved in the shape of a skull.",
+    "Nightshade Extract": "A highly toxic, dark purple liquid.",
+    "King's Crown (Secret)": "The ancient, tarnished crown of the first ruler of the Citadel.",
+    "Blue Book": "A book bound in blue leather. The title is 'Tides of the Moon'.",
+    "Red Book": "A book bound in crimson leather. The title is 'Flames of the Sun'.",
+    "Golden Book": "A book bound in gold leaf. The title is 'Dawn of the Empire'."
 };
 
+// --- GAME DATA ---
+const world = {
+    // === LEVEL 0 - GROUND FLOOR ===
+    "courtyard": { x: 6, y: 4, z: 0, w: 8, h: 6, name: "The Grand Courtyard", desc: "You stand in a massive open courtyard. Dead vines cling to the high stone walls. A massive set of double doors leads South into the main keep. To the North is the Royal Chapel.", items: [], exits: { s: "main_hall", n: "chapel", w: "west_cloister", e: "east_cloister" }, interactions: [], features: [
+        { type: "fountain", x: 3, y: 2, w: 2, h: 2 }
+    ]},
+    
+    "main_hall": { x: 8, y: 10, z: 0, w: 4, h: 4, name: "Main Hall", desc: "The grand entrance hall of the citadel. The floor is covered in thick dust.", items: [], exits: { n: "courtyard", s: "foyer" }, interactions: [
+        { label: "Inspect the west wall tapestry", action: (r) => { 
+            let msg = "You pull back the heavy tapestry. Behind it is a solid stone wall, but there is a small indentation shaped exactly like a bell.";
+            if (player.inventory.includes("Silver Bell") && !r.bellPlaced) {
+                r.interactions.push({ label: "Place the Silver Bell in the wall", action: (r2) => {
+                    r2.bellPlaced = true;
+                    world["main_hall"].exits.w = "hidden_armory";
+                    player.secretsFound++;
+                    updateText("You press the Silver Bell into the indentation. The stone wall grinds open, revealing a hidden room in the center of the castle!");
+                    removeInteraction(r2, r2.interactions.length - 1);
+                    removeInteraction(r2, 0); 
+                    updateUI();
+                }});
+                updateText(msg + " You realize the Silver Bell you found fits perfectly!");
+            } else {
+                updateText(msg);
+            }
+        }}
+    ], features: [
+        { type: "carpet", x: 1.5, y: 0, w: 1, h: 4 }
+    ]},
+
+    "hidden_armory": { x: 6, y: 10, z: 0, w: 2, h: 4, name: "Hidden Vault", desc: "A secret room perfectly concealed between the Main Hall and the West Cloister. Racks of pristine, glowing weapons line the walls.", items: [], exits: { e: "main_hall" }, interactions: [
+        { label: "Take the glowing sword", action: (r) => { takeItem("Sword of Light (Secret)"); player.secretsFound++; updateText("You pull the legendary sword from its stone pedestal."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "altar", x: 0.5, y: 1.5, w: 1, h: 1 }
+    ]},
+    
+    "foyer": { x: 8, y: 14, z: 0, w: 4, h: 3, name: "South Foyer", desc: "A smaller antechamber. A set of dark stairs leads down to the Dungeon. The shattered main gates lead South into the Guard Wing.", items: [], exits: { n: "main_hall", d: "dungeon_entrance", s: "guard_hallway" }, interactions: [
+        { label: "Search the rubble", action: (r) => { takeItem("Rusty Key"); updateText("You find a heavy Rusty Key buried in the gate rubble."); removeInteraction(r, 0); } }
+    ]},
+
+    // Guard Wing (South of Foyer)
+    "guard_hallway": { x: 8, y: 17, z: 0, w: 4, h: 2, name: "Guard Hallway", desc: "A wide stone corridor connecting the barracks, mess hall, and armory.", items: [], exits: { n: "foyer", w: "western_armory", e: "barracks", s: "mess_hall" }, interactions: [] },
+    
+    "barracks": { x: 12, y: 17, z: 0, w: 6, h: 4, name: "Guard Barracks", desc: "Rows of rotted wooden cots line the walls. Smashed footlockers are scattered across the floor.", items: [], exits: { w: "guard_hallway" }, interactions: [
+        { label: "Search the footlockers", action: (r) => { takeItem("Guard's Note"); updateText("You pry open a slightly intact footlocker and find a Guard's Note."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "bed", x: 1, y: 0.5, w: 1, h: 2 }, { type: "bed", x: 2.5, y: 0.5, w: 1, h: 2 }, { type: "bed", x: 4, y: 0.5, w: 1, h: 2 }
+    ]},
+
+    "mess_hall": { x: 8, y: 19, z: 0, w: 4, h: 6, name: "Mess Hall", desc: "A massive dining area for the guards. Long tables are flipped over, and skeletal remains sit in the corners.", items: [], exits: { n: "guard_hallway" }, interactions: [
+        { label: "Examine the skeletons", action: (r) => { takeItem("Tomb Key"); updateText("Clutched in the bony fingers of a guard captain is a heavy stone Tomb Key."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "table", x: 1, y: 1, w: 2, h: 1 }, { type: "table", x: 1, y: 3, w: 2, h: 1 }
+    ]},
+
+    "western_armory": { x: 4, y: 17, z: 0, w: 4, h: 4, name: "Western Armory", desc: "The heavy iron door was securely locked. Inside, racks of halberds and shields line the walls.", items: ["Crowbar"], locked: true, passcode: "8", exits: { e: "guard_hallway" }, interactions: [
+        { label: "Search the weapons racks", action: (r) => { updateText("Most of the weapons are rusted to dust, but the Crowbar seems usable."); removeInteraction(r, 0); } }
+    ]},
+
+    // Northern Wing (Chapel & Gardens)
+    "chapel": { x: 8, y: -2, z: 0, w: 4, h: 6, name: "The Royal Chapel", desc: "Rows of rotting pews face a cracked marble altar. Sunlight streams through a shattered stained-glass window. A heavy door leads North to the Gardens.", items: [], locked: true, passcode: "1472", exits: { s: "courtyard", n: "garden_entrance" }, interactions: [
+        { label: "Search the altar", action: (r) => { takeItem("Silver Bell"); updateText("You find a small Silver Bell hidden beneath the altar cloth. It has a strange, geometric base."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "altar", x: 1, y: 0.5, w: 2, h: 1 },
+        { type: "pews", x: 0.5, y: 2.5, w: 3, h: 3 }
+    ]},
+
+    "garden_entrance": { x: 8, y: -6, z: 0, w: 4, h: 4, name: "Garden Gates", desc: "The overgrown entrance to the Royal Gardens. Thorny vines choke the pathways to the West, East, and North.", items: [], exits: { s: "chapel", w: "greenhouse", e: "observatory_path", n: "hedge_1" }, interactions: [] },
+
+    "greenhouse": { x: 2, y: -8, z: 0, w: 6, h: 4, name: "Glass Greenhouse", desc: "A shattered glass dome. Inside, bizarre, unnaturally large plants have taken over. One strange purple flower is dripping sap.", items: [], exits: { e: "garden_entrance" }, interactions: [
+        { label: "Collect the purple sap", action: (r) => { takeItem("Nightshade Extract"); updateText("You carefully collect the toxic sap into a vial."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "table", x: 1, y: 1, w: 4, h: 2 }
+    ]},
+
+    "observatory_path": { x: 12, y: -6, z: 0, w: 4, h: 2, name: "Observatory Path", desc: "A winding dirt path leading to a solitary tower.", items: [], exits: { w: "garden_entrance", e: "observatory" }, interactions: [] },
+
+    "observatory": { x: 16, y: -8, z: 0, w: 4, h: 4, shape: "circle", name: "Star Observatory", desc: "A circular room with a massive brass telescope pointing at the sky.", items: ["Star Map"], exits: { w: "observatory_path" }, interactions: [
+        { label: "Look through the telescope", action: (r) => { 
+            let code = prompt("You look into the eyepiece. There are three dials to set the coordinates. Enter the 3-digit coordinates (e.g. 123):");
+            if (code === "429") {
+                updateText("You lock in 4-2-9. The lenses align, focusing on the Serpent constellation. Suddenly, a hidden compartment in the telescope pops open! You found an Ancient Coin.");
+                takeItem("Ancient Coin");
+                removeInteraction(r, 0);
+            } else if (code !== null) {
+                updateText("You turn the dials, but all you see is blurry darkness. You need specific coordinates.");
+            }
+        }}
+    ]},
+
+    "hedge_1": { x: 8, y: -10, z: 0, w: 2, h: 4, name: "Hedge Maze - Entrance", desc: "Towering hedges block your vision. The path splits.", items: [], exits: { s: "garden_entrance", n: "hedge_2", e: "hedge_trap" }, interactions: [] },
+    "hedge_trap": { x: 10, y: -10, z: 0, w: 2, h: 2, name: "Hedge Maze - Dead End", desc: "A dead end. Wait, the hedges are shifting! You are turned around.", items: [], exits: { s: "garden_entrance" }, interactions: [] },
+    "hedge_2": { x: 6, y: -10, z: 0, w: 2, h: 2, name: "Hedge Maze - Fork", desc: "Another fork in the path.", items: [], exits: { e: "hedge_1", n: "hedge_3", w: "hedge_trap" }, interactions: [] },
+    "hedge_3": { x: 6, y: -14, z: 0, w: 4, h: 4, name: "Hedge Maze - Center", desc: "You made it to the center of the maze! A stone pedestal stands here.", items: [], exits: { s: "hedge_2" }, interactions: [
+        { label: "Examine the pedestal", action: (r) => { takeItem("Astronomer's Log"); updateText("You find an Astronomer's Log resting on the stone."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "altar", x: 1.5, y: 1.5, w: 1, h: 1 }
+    ]},
+
+    // West Wing
+    "west_cloister": { x: 4, y: 6, z: 0, w: 2, h: 4, name: "West Cloister", desc: "A covered walkway surrounding the courtyard. It connects to a circular tower.", items: [], exits: { e: "courtyard", w: "nw_tower_base", s: "dining_room" }, interactions: [] },
+    
+    "nw_tower_base": { x: 0, y: 6, z: 0, w: 4, h: 4, shape: "circle", name: "NW Watchtower Base", desc: "The base of a massive circular watchtower. A spiral staircase winds upward along the curved wall.", items: ["Torch"], exits: { e: "west_cloister", u: "nw_tower_mid" }, interactions: [] },
+
+    "dining_room": { x: 2, y: 10, z: 0, w: 4, h: 3, name: "Dining Room", desc: "A long mahogany table stretches across this room. A strange, slightly glowing goblet sits at the head of the table.", items: [], exits: { n: "west_cloister", s: "kitchen" }, interactions: [
+        { label: "Take the glowing goblet", action: (r) => { takeItem("Enchanted Goblet"); updateText("As you pick it up, the liquid evaporates."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "table", x: 0.5, y: 1, w: 3, h: 1 }
+    ]},
+    
+    "kitchen": { x: 2, y: 13, z: 0, w: 4, h: 4, name: "Kitchens", desc: "Giant iron stoves stand cold against the wall. A massive meat cleaver is buried deep into a butcher's block.", items: [], exits: { n: "dining_room", w: "pantry" }, interactions: [
+        { label: "Yank the meat cleaver free", action: (r) => { takeItem("Heavy Cleaver"); updateText("You pull the cleaver free."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "stove", x: 0, y: 0.5, w: 1, h: 3 },
+        { type: "table", x: 2, y: 1.5, w: 1, h: 1 }
+    ]},
+    
+    "pantry": { x: 0, y: 14, z: 0, w: 2, h: 3, name: "Pantry", desc: "It is pitch black in here.", requiresLight: true, items: [], exits: { e: "kitchen" }, interactions: [
+        { label: "Search the shelves", action: (r) => { takeItem("Rope"); updateText("You find a coil of sturdy hemp rope."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "bookshelf", x: 0, y: 0, w: 0.5, h: 3 }
+    ]},
+
+    // East Wing
+    "east_cloister": { x: 14, y: 6, z: 0, w: 2, h: 4, name: "East Cloister", desc: "A covered walkway connecting to the library and the eastern tower.", items: [], exits: { w: "courtyard", e: "ne_tower_base", s: "library" }, interactions: [] },
+    
+    "ne_tower_base": { x: 16, y: 6, z: 0, w: 4, h: 4, shape: "circle", name: "NE Tower Base", desc: "This circular room was used as an armory. A staircase leads up.", items: [], exits: { w: "east_cloister", u: "ne_tower_top" }, interactions: [] },
+
+    "library": { x: 14, y: 10, z: 0, w: 6, h: 5, name: "The Grand Library", desc: "Two stories of rotting books line the walls. A spiral staircase leads up. One bookshelf looks crooked.", items: ["Blue Book", "Red Book"], exits: { n: "east_cloister", s: "study", u: "library_balcony" }, interactions: [
+        { label: "Pull the crooked book", action: (r) => {
+            updateText("The bookshelf slides right, revealing a hidden passage to the East!");
+            world["library"].exits.e = "secret_archive";
+            removeInteraction(r, 0);
+            updateUI();
+        }}
+    ], features: [
+        { type: "bookshelf", x: 0, y: 0, w: 0.5, h: 4 },
+        { type: "bookshelf", x: 5.5, y: 0, w: 0.5, h: 4 },
+        { type: "desk", x: 2.5, y: 2, w: 1, h: 1 }
+    ]},
+
+    "secret_archive": { x: 20, y: 11, z: 0, w: 3, h: 3, name: "Hidden Archive", desc: "A pristine room untouched by time. A golden chalice sits on a velvet pedestal.", items: ["Golden Book"], exits: { w: "library" }, interactions: [
+        { label: "Take the Golden Chalice", action: (r) => { takeItem("Golden Chalice"); player.secretsFound++; updateText("You take the chalice."); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "altar", x: 1, y: 1, w: 1, h: 1 }
+    ]},
+
+    "study": { x: 14, y: 15, z: 0, w: 4, h: 3, name: "Private Study", desc: "A cozy room with a large desk. The fireplace is cold. There is a trapdoor leading down.", items: [], exits: { n: "library", d: "deep_archives" }, interactions: [
+        { label: "Search the desk drawers", action: (r) => { takeItem("Brass Key"); takeItem("Lord's Journal"); updateText("You find a Brass Key and a leather-bound journal. Read the journal in your inventory."); removeInteraction(r, 0); }}
+    ], features: [
+        { type: "desk", x: 1.5, y: 1, w: 1, h: 0.8 },
+        { type: "bookshelf", x: 0, y: 0, w: 4, h: 0.5 }
+    ]},
+
+    // === LEVEL 1 - SECOND FLOOR ===
+    "nw_tower_mid": { x: 0, y: 6, z: 1, w: 4, h: 4, shape: "circle", name: "NW Watchtower Mid", desc: "A circular landing in the watchtower. The stairs continue up.", items: [], exits: { d: "nw_tower_base", u: "nw_tower_top" }, interactions: [] },
+    "nw_tower_top": { x: 0, y: 6, z: 2, w: 4, h: 4, shape: "circle", name: "NW Watchtower Peak", desc: "You are at the very top of the tower. You can see for miles across the ash-covered landscape.", items: [], exits: { d: "nw_tower_mid" }, interactions: [] },
+
+    "ne_tower_top": { x: 16, y: 6, z: 1, w: 4, h: 4, shape: "circle", name: "NE Tower Peak", desc: "The top of the eastern tower. A skeleton slumped against the wall holds a vial.", items: ["Healing Potion"], exits: { d: "ne_tower_base" }, interactions: [] },
+
+    "library_balcony": { x: 14, y: 10, z: 1, w: 6, h: 5, name: "Library Balcony", desc: "You are on the wooden walkway overlooking the library.", items: [], exits: { d: "library", w: "upper_hall" }, interactions: [] },
+    
+    "upper_hall": { x: 8, y: 10, z: 1, w: 4, h: 4, name: "Upper Hallway", desc: "A long gallery lined with exactly 8 empty suits of armor. A grand staircase leads UP.", items: [], exits: { e: "library_balcony", s: "master_bedroom", u: "sphinx_landing" }, interactions: [] },
+    
+    "master_bedroom": { x: 8, y: 14, z: 1, w: 4, h: 4, name: "Master Bedroom", desc: "A lavish but ruined bedroom. The four-poster bed has collapsed.", locked: true, requiredKey: "Brass Key", items: [], exits: { n: "upper_hall" }, interactions: [
+        { label: "Search beneath the floorboards", action: (r) => {
+            if (player.inventory.includes("Heavy Cleaver") || player.inventory.includes("Crowbar")) {
+                takeItem("Crown Jewel (Secret)");
+                player.secretsFound++;
+                updateText("Using your heavy tools, you pry open the loose floorboards, uncovering the legendary Crown Jewel!");
+                removeInteraction(r, 0);
+            } else {
+                updateText("You notice a loose floorboard, but it's jammed tight. You need a tool to pry it open.");
+            }
+        }}
+    ], features: [
+        { type: "bed", x: 1, y: 1, w: 2, h: 2.5 }
+    ]},
+
+    // === LEVEL 2 - HIGH KEEP ===
+    "sphinx_landing": { x: 8, y: 10, z: 2, w: 4, h: 4, name: "The Sphinx Landing", desc: "A massive, magical stone Sphinx blocks the golden doors to the North.", items: [], exits: { d: "upper_hall" }, interactions: [
+        { label: "Speak to the Sphinx", action: (r) => {
+            let ans = prompt("The Sphinx speaks: 'What runs but never walks, has a mouth but never talks?'");
+            if (ans && ans.toLowerCase().includes("river")) {
+                updateText("The Sphinx bows its head. 'You may pass.' The golden doors swing open!");
+                world["sphinx_landing"].exits.n = "throne_room";
+                removeInteraction(r, 0);
+                updateUI();
+            } else if (ans !== null) {
+                updateText("The Sphinx's eyes flash red. 'Incorrect. Begone.'");
+            }
+        }}
+    ]},
+    "throne_room": { x: 8, y: 4, z: 2, w: 4, h: 6, name: "The Dark Throne", desc: "You have reached the apex of the citadel. A massive obsidian throne sits empty.", items: [], exits: { s: "sphinx_landing" }, interactions: [
+        { label: "Sit on the Throne", action: (r) => { updateText("You sit on the throne. The castle trembles. You have conquered the Citadel!"); removeInteraction(r, 0); } }
+    ], features: [
+        { type: "altar", x: 1, y: 1, w: 2, h: 2 }
+    ]},
+
+    // === LEVEL -1 - DUNGEON & DEEP ARCHIVES ===
+    "dungeon_entrance": { x: 8, y: 14, z: -1, w: 4, h: 3, name: "Dungeon Entrance", desc: "The air here is freezing cold. The walls are rough-hewn stone.", requiresLight: true, items: [], exits: { u: "foyer", n: "cell_block" }, interactions: [] },
+    
+    "cell_block": { x: 6, y: 8, z: -1, w: 8, h: 6, name: "Central Cell Block", desc: "A massive block of iron cages.", requiresLight: true, locked: true, requiredKey: "Rusty Key", items: [], exits: { s: "dungeon_entrance", w: "torture_chamber", e: "oubliette_top" }, interactions: [
+        { label: "Search the skeletons", action: (r) => { takeItem("Iron Ring"); updateText("You find a heavy iron ring."); removeInteraction(r, 0); }}
+    ]},
+
+    "torture_chamber": { x: 2, y: 8, z: -1, w: 4, h: 6, name: "Torture Chamber", desc: "Rusted terrifying implements fill this room. An iron maiden stands open.", requiresLight: true, items: [], exits: { e: "cell_block" }, interactions: [
+        { label: "Look inside the Iron Maiden", action: (r) => { takeItem("Ancient Coin"); updateText("You find an ancient gold coin."); removeInteraction(r, 0); }}
+    ]},
+
+    "oubliette_top": { x: 14, y: 10, z: -1, w: 2, h: 2, name: "Oubliette Grate", desc: "A heavy iron grate covers a pitch-black hole.", requiresLight: true, items: [], exits: { w: "cell_block" }, interactions: [
+        { label: "Tie Rope and climb down [Requires Rope]", action: (r) => {
+            if (player.inventory.includes("Rope")) {
+                world["oubliette_top"].exits.d = "oubliette_bottom";
+                updateText("You securely tie the rope to the iron grate and drop it into the abyss. You can now climb down.");
+                removeInteraction(r, 0);
+                updateUI();
+            } else {
+                updateText("It's a sheer drop into darkness. You need a Rope.");
+            }
+        }}
+    ]},
+
+    "deep_archives": { x: 14, y: 15, z: -1, w: 6, h: 6, name: "The Deep Archives", desc: "A forgotten library beneath the study. A stone pedestal sits before a sealed vault door.", requiresLight: true, items: [], exits: { u: "study" }, interactions: [
+        { label: "Place the Red, Blue, and Gold Books on the pedestal", action: (r) => {
+            if (player.inventory.includes("Red Book") && player.inventory.includes("Blue Book") && player.inventory.includes("Golden Book")) {
+                world["deep_archives"].exits.e = "forbidden_vault";
+                updateText("You place the three colored books onto the pedestal. The heavy vault door slides open!");
+                removeInteraction(r, 0);
+                updateUI();
+            } else {
+                updateText("You are missing some of the books required to complete the pedestal array.");
+            }
+        }}
+    ], features: [
+        { type: "bookshelf", x: 0, y: 0, w: 6, h: 0.5 }, { type: "altar", x: 2.5, y: 2.5, w: 1, h: 1 }
+    ]},
+
+    "forbidden_vault": { x: 20, y: 15, z: -1, w: 4, h: 4, name: "Forbidden Vault", desc: "The air here crackles with dark magic.", requiresLight: true, items: [], exits: { w: "deep_archives" }, interactions: [
+        { label: "Take the Cursed Relic", action: (r) => { updateText("As you touch it, voices whisper in your mind. You have found a horrifying secret."); player.secretsFound++; removeInteraction(r, 0); }}
+    ]},
+
+    // === LEVEL -2 - DEEP DUNGEON & CRYPTS ===
+    "oubliette_bottom": { x: 14, y: 10, z: -2, w: 2, h: 2, name: "The Oubliette", desc: "It is suffocatingly tight down here. You are standing on ancient bones. A narrow fissure leads South.", requiresLight: true, items: [], exits: { u: "oubliette_top", s: "crypt_entrance" }, interactions: [] },
+    
+    "crypt_entrance": { x: 12, y: 12, z: -2, w: 6, h: 4, name: "Crypt of the Forgotten", desc: "A sprawling underground catacomb. Stone sarcophagi line the walls.", requiresLight: true, items: [], exits: { n: "oubliette_bottom", e: "tomb_of_kings" }, interactions: [] },
+
+    "tomb_of_kings": { x: 18, y: 12, z: -2, w: 6, h: 6, name: "Tomb of the First King", desc: "A majestic underground tomb. A massive stone door blocks the center.", requiresLight: true, locked: true, requiredKey: "Tomb Key", items: [], exits: { w: "crypt_entrance" }, interactions: [
+        { label: "Open the Sarcophagus", action: (r) => { 
+            takeItem("King's Crown (Secret)");
+            player.secretsFound++;
+            updateText("You heave the heavy stone lid open, revealing the King's Crown!");
+            removeInteraction(r, 0);
+        }}
+    ], features: [
+        { type: "altar", x: 2, y: 2, w: 2, h: 2 }
+    ]}
+};
+
+// --- PLAYER STATE ---
 let player = {
-    currentRoom: "entrance",
+    currentRoom: "courtyard",
     inventory: [],
-    discoveredRooms: ["entrance"]
+    discoveredRooms: ["courtyard"],
+    secretsFound: 0
 };
 
 let currentMessage = null;
 
+const savedState = localStorage.getItem('citadel_rpg_state_v10');
+if (savedState) {
+    player = JSON.parse(savedState);
+} else {
+    localStorage.clear();
+}
+
 function saveGame() {
-    localStorage.setItem('citadelSave', JSON.stringify(player));
+    localStorage.setItem('citadel_rpg_state_v10', JSON.stringify(player));
     updateUI();
 }
 
-function loadGame() {
-    const saved = localStorage.getItem('citadelSave');
-    if (saved) {
-        player = JSON.parse(saved);
-        updateUI();
-    }
+function takeItem(item) {
+    if (!player.inventory.includes(item)) player.inventory.push(item);
 }
-
 function updateText(text) {
     currentMessage = text;
-    updateUI();
+    document.getElementById('story-text').innerText = text;
+}
+function removeInteraction(room, index) {
+    room.interactions.splice(index, 1);
 }
 
+// --- ENGINE LOGIC ---
 function updateUI() {
     const room = world[player.currentRoom];
-    document.getElementById('room-name').innerText = room.name;
     
-    if (currentMessage) {
-        document.getElementById('story-text').innerHTML = `<p>${room.desc}</p><p style="color:#4ade80; border-left: 2px solid #4ade80; padding-left: 10px;">${currentMessage}</p>`;
-    } else {
-        document.getElementById('story-text').innerText = room.desc;
-    }
+    document.getElementById('room-name').innerText = room.name;
 
-    renderActions(room);
-    renderNavigation(room);
-    renderInventory();
+    if (room.requiresLight && !player.inventory.includes("Torch")) {
+        document.getElementById('story-text').innerText = "It is pitch black in here. You cannot see anything. You need a light source.";
+        document.getElementById('choices-container').innerHTML = '';
+    } else {
+        document.getElementById('story-text').innerText = currentMessage || room.desc;
+        renderActions(room);
+    }
     
     document.getElementById('rooms-count').innerText = player.discoveredRooms.length;
-    let secrets = player.inventory.length;
-    document.getElementById('secrets-count').innerText = secrets;
-}
+    document.getElementById('secrets-count').innerText = player.secretsFound;
 
-function renderInventory() {
-    const list = document.getElementById('inventory-list');
-    list.innerHTML = '';
+    const invList = document.getElementById('inventory-list');
+    invList.innerHTML = '';
     if (player.inventory.length === 0) {
-        list.innerHTML = '<li class="empty-inv">Empty</li>';
+        invList.innerHTML = '<li class="empty-inv">Empty</li>';
     } else {
-        player.inventory.forEach(itemId => {
-            const li = document.createElement('li');
-            li.innerText = itemId; 
-            
-            li.onclick = () => {
-                const descBox = document.getElementById('item-description-box');
-                const nameEl = document.getElementById('item-desc-name');
-                const textEl = document.getElementById('item-desc-text');
-                
-                descBox.classList.remove('hidden');
-                
-                let foundItem = null;
-                for (let r in world) {
-                    if (world[r].items) {
-                        let i = world[r].items.find(it => it.name === itemId);
-                        if (i) foundItem = i;
-                    }
-                }
-                
-                if (foundItem) {
-                    nameEl.innerText = foundItem.name;
-                    textEl.innerText = foundItem.desc;
-                } else {
-                    nameEl.innerText = itemId;
-                    textEl.innerText = "A mysterious artifact.";
-                }
-            };
-            list.appendChild(li);
+        player.inventory.forEach(item => {
+            let li = document.createElement('li');
+            li.innerText = item;
+            li.onclick = () => showItemDescription(item);
+            invList.appendChild(li);
         });
     }
+
+    renderNavigation(room);
+}
+
+function showItemDescription(itemName) {
+    const box = document.getElementById('item-description-box');
+    const nameEl = document.getElementById('item-desc-name');
+    const textEl = document.getElementById('item-desc-text');
+    
+    let baseName = itemName.replace(" (Secret)", "");
+    let desc = itemsDB[baseName] || "A mysterious object.";
+    
+    nameEl.innerText = itemName;
+    textEl.innerText = desc;
+    box.classList.remove('hidden');
 }
 
 function renderActions(room) {
     const container = document.getElementById('choices-container');
     container.innerHTML = '';
 
-    if (room.items && room.items.length > 0) {
+    if (room.items.length > 0) {
         room.items.forEach(item => {
+            const takeBtn = document.createElement('button');
+            takeBtn.className = 'choice-btn';
+            takeBtn.innerText = `Take [${item}]`;
+            takeBtn.onclick = () => {
+                player.inventory.push(item);
+                if (item.includes("(Secret)")) player.secretsFound++;
+                room.items = room.items.filter(i => i !== item);
+                updateText(`You took the ${item}.`);
+                renderActions(room);
+                saveGame();
+            };
+            container.appendChild(takeBtn);
+        });
+    }
+
+    if (room.interactions && room.interactions.length > 0) {
+        room.interactions.forEach((int, index) => {
             const btn = document.createElement('button');
             btn.className = 'choice-btn';
-            btn.innerText = `Take ${item.name}`;
+            btn.innerText = int.label;
             btn.onclick = () => {
-                player.inventory.push(item.name);
-                room.items = room.items.filter(i => i.id !== item.id);
-                updateText(`You picked up the ${item.name}.`);
-                document.getElementById('item-description-box').classList.add('hidden');
+                int.action(room);
+                renderActions(room);
                 saveGame();
             };
             container.appendChild(btn);
         });
-    }
-
-    if (room.name === "The Scholar's Atrium") {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.innerText = "Read a Dusty Tome";
-        btn.onclick = () => {
-            updateText("You pull a crumbling book from the shelf. 'The Master of the Keep looks to the Heavens. The answer lies in the STARS.'");
-            saveGame();
-        };
-        container.appendChild(btn);
-    }
-    
-    if (room.name === "Hidden Study") {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.innerText = "Examine Drawings";
-        btn.onclick = () => {
-            updateText("The drawings seem to map out the castle. One note reads: 'The lowest point holds the truth.'");
-            saveGame();
-        };
-        container.appendChild(btn);
-    }
-
-    if (container.children.length === 0) {
-        container.innerHTML = '<span style="color:#5c544a; font-style:italic;">Nothing obvious to interact with.</span>';
+    } else if (room.items.length === 0) {
+        const p = document.createElement('p');
+        p.style.color = '#55627a';
+        p.style.fontStyle = 'italic';
+        p.innerText = "There is nothing else to interact with here.";
+        container.appendChild(p);
     }
 }
 
 function renderNavigation(room) {
     const container = document.getElementById('navigation-container');
     container.innerHTML = '';
-
     const dirs = { n: "North", s: "South", e: "East", w: "West", u: "Up", d: "Down" };
 
     for (let dir in room.exits) {
