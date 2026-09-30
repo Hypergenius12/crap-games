@@ -3,67 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Blackwood Citadel - RPG</title>
-    <link rel="stylesheet" href="style.css?v=9">
+    <title>The Blackwood Citadel - Grand RPG</title>
+    <link rel="stylesheet" href="style.css?v=20">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="game-container">
         <header>
-            <h1>The Blackwood Citadel</h1>
-            <div class="tracker">
-                <button id="map-btn" onclick="toggleMap()">View Floorplan</button>
+            <div class="header-titles">
+                <span class="header-tag">EPIC TEXT RPG & CARTOGRAPHIC EXPEDITION</span>
+                <h1>The Blackwood Citadel</h1>
+            </div>
+            <div class="header-controls">
+                <button id="sound-btn" class="header-btn" onclick="toggleSound()" title="Toggle Atmospheric Audio">
+                    <span id="sound-icon">🔊</span> <span id="sound-label">Audio ON</span>
+                </button>
+                <button id="map-btn" class="header-btn primary-btn" onclick="toggleMap()" title="Open Parchment Cartographer's Map">
+                    🗺️ Parchment Map
+                </button>
             </div>
         </header>
 
+        <!-- Notification Toast -->
+        <div id="toast" class="toast hidden"></div>
+
         <div id="main-layout">
             <main>
-                <h2 id="room-name">Loading...</h2>
-                <div id="story-text">Loading story...</div>
+                <!-- Room Header -->
+                <div class="room-header-card">
+                    <div class="room-floor-badge" id="room-floor-tag">Ground Floor (Z: 0)</div>
+                    <h2 id="room-name">The Grand Courtyard</h2>
+                </div>
+
+                <!-- Story Text / Atmospheric Narrative -->
+                <div id="story-text-container">
+                    <div id="story-text">Loading the ancient annals of the citadel...</div>
+                </div>
                 
+                <!-- Action Choices -->
                 <div class="action-section">
-                    <h3>Actions</h3>
+                    <div class="section-title-wrap">
+                        <h3>Inspect & Interact</h3>
+                        <span class="section-sub">Search surroundings & solve puzzles</span>
+                    </div>
                     <div id="choices-container"></div>
                 </div>
 
+                <!-- Navigation Exits -->
                 <div class="action-section">
-                    <h3>Navigation</h3>
+                    <div class="section-title-wrap">
+                        <h3>Directional Passages</h3>
+                        <span class="section-sub">Navigate the fortress wings</span>
+                    </div>
                     <div id="navigation-container"></div>
                 </div>
             </main>
 
             <aside id="sidebar">
-                <h3>Inventory</h3>
-                <ul id="inventory-list">
-                    <li class="empty-inv">Empty</li>
-                </ul>
-                <div id="item-description-box" class="hidden">
-                    <strong id="item-desc-name">Item Name</strong>
-                    <p id="item-desc-text">Item description goes here.</p>
+                <!-- Inventory -->
+                <div class="sidebar-block">
+                    <div class="sidebar-header">
+                        <h3>Satchel & Inventory</h3>
+                        <span id="inv-count" class="badge">0 items</span>
+                    </div>
+                    <ul id="inventory-list">
+                        <li class="empty-inv">Satchel is empty</li>
+                    </ul>
+                    <div id="item-description-box" class="hidden">
+                        <div class="item-desc-header">
+                            <strong id="item-desc-name">Item Name</strong>
+                            <span id="item-desc-type" class="item-type-tag">Relic</span>
+                        </div>
+                        <p id="item-desc-text">Item description and lore.</p>
+                        <div id="item-actions-container"></div>
+                    </div>
                 </div>
 
-                <h3 style="margin-top: 30px;">Exploration Status</h3>
-                <div class="status-text">Rooms Discovered: <span id="rooms-count">0</span></div>
-                <div class="status-text">Secrets Found: <span id="secrets-count">0</span></div>
+                <!-- Exploration Tracker -->
+                <div class="sidebar-block">
+                    <div class="sidebar-header">
+                        <h3>Expedition Status</h3>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Fortress Explored:</span>
+                        <span class="stat-val"><strong id="rooms-count">0</strong> / <span id="total-rooms-count">95</span> (<span id="rooms-percent">0%</span>)</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="rooms-progress" class="progress-fill" style="width: 0%;"></div>
+                    </div>
+
+                    <div class="stat-row" style="margin-top: 14px;">
+                        <span class="stat-label">Arcane Secrets:</span>
+                        <span class="stat-val"><strong id="secrets-count" class="gold-text">0</strong> / 20</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="secrets-progress" class="progress-fill gold-fill" style="width: 0%;"></div>
+                    </div>
+
+                    <div class="stat-row" style="margin-top: 14px;">
+                        <span class="stat-label">Current Elevation:</span>
+                        <span class="stat-val" id="elevation-text">Ground Level</span>
+                    </div>
+                </div>
+
+                <!-- Save & Local Drive Management -->
+                <div class="sidebar-block save-block">
+                    <div class="sidebar-header">
+                        <h3>Expedition Journal & Saves</h3>
+                    </div>
+                    <div class="save-buttons-grid">
+                        <button class="save-btn" onclick="saveGame(true)" title="Save progress in browser storage">💾 Quick Save</button>
+                        <button class="save-btn" onclick="loadGame(true)" title="Load last browser save">📥 Quick Load</button>
+                        <button class="save-btn" onclick="exportSaveToFile()" title="Download save file (.json) to your local PC drive">⬇️ Export to Drive</button>
+                        <label class="save-btn file-label" title="Upload save file (.json) from your PC">
+                            ⬆️ Import from Drive
+                            <input type="file" id="import-file-input" accept=".json" onchange="importSaveFromFile(event)" style="display: none;">
+                        </label>
+                    </div>
+                    <div class="reset-wrapper">
+                        <button class="reset-btn" onclick="confirmResetGame()">🔄 Reset / New Game</button>
+                        <span id="save-status-indicator" class="save-status">Auto-saved</span>
+                    </div>
+                </div>
             </aside>
         </div>
     </div>
 
-    <!-- Map Modal -->
+    <!-- Parchment Cartographer Map Modal -->
     <div id="map-modal" class="hidden">
-        <div class="map-header">
-            <h2>Citadel Floorplan</h2>
-            <div id="level-tabs">
-                <!-- Injected dynamically -->
+        <div class="parchment-frame">
+            <div class="map-top-bar">
+                <div class="map-branding">
+                    <span class="map-sub">CARTOGRAPHER'S SURVEY OF</span>
+                    <h2>The Citadel of Blackwood</h2>
+                </div>
+                
+                <!-- Floor Tabs -->
+                <div id="level-tabs" class="parchment-tabs">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <div class="map-action-buttons">
+                    <button class="map-ctrl-btn" onclick="recenterMap()" title="Center map on your current location">📍 Center Player</button>
+                    <button class="map-ctrl-btn" onclick="zoomInMap()" title="Zoom In">+</button>
+                    <button class="map-ctrl-btn" onclick="zoomOutMap()" title="Zoom Out">−</button>
+                    <button class="map-ctrl-btn" onclick="resetZoomMap()" title="Reset Zoom">100%</button>
+                    <button onclick="toggleMap()" class="close-map-btn" title="Return to Expedition">✕ Close Map</button>
+                </div>
             </div>
-            <button onclick="toggleMap()" class="close-btn">Close Map</button>
-        </div>
-        <div id="map-viewport">
-            <div id="map-plane">
-                <!-- Architectural rooms injected here -->
+
+            <div class="map-canvas-wrapper" id="map-canvas-container">
+                <canvas id="citadel-map-canvas"></canvas>
+                
+                <!-- Compass Rose Overlay -->
+                <div class="compass-rose" id="compass-rose" title="Ancient Magnetic Compass">
+                    <svg viewBox="0 0 100 100" width="80" height="80">
+                        <circle cx="50" cy="50" r="46" fill="none" stroke="#68553d" stroke-width="1.5" stroke-dasharray="3 3"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#3d3021" stroke-width="1"/>
+                        <!-- North pointer -->
+                        <polygon points="50,10 56,46 50,42" fill="#932b2b" stroke="#501616" stroke-width="1"/>
+                        <polygon points="50,10 44,46 50,42" fill="#c74343" stroke="#501616" stroke-width="1"/>
+                        <!-- South pointer -->
+                        <polygon points="50,90 56,54 50,58" fill="#5a4933" stroke="#2a2014" stroke-width="1"/>
+                        <polygon points="50,90 44,54 50,58" fill="#806849" stroke="#2a2014" stroke-width="1"/>
+                        <!-- East pointer -->
+                        <polygon points="90,50 54,56 58,50" fill="#5a4933" stroke="#2a2014" stroke-width="1"/>
+                        <polygon points="90,50 54,44 58,50" fill="#806849" stroke="#2a2014" stroke-width="1"/>
+                        <!-- West pointer -->
+                        <polygon points="10,50 46,56 42,50" fill="#5a4933" stroke="#2a2014" stroke-width="1"/>
+                        <polygon points="10,50 46,44 42,50" fill="#806849" stroke="#2a2014" stroke-width="1"/>
+                        <circle cx="50" cy="50" r="4" fill="#c9ad7a" stroke="#332415"/>
+                        <text x="50" y="8" text-anchor="middle" font-size="9" font-family="'Cinzel', serif" font-weight="bold" fill="#ab3737">N</text>
+                        <text x="50" y="99" text-anchor="middle" font-size="8" font-family="'Cinzel', serif" fill="#68553d">S</text>
+                        <text x="96" y="53" text-anchor="middle" font-size="8" font-family="'Cinzel', serif" fill="#68553d">E</text>
+                        <text x="4" y="53" text-anchor="middle" font-size="8" font-family="'Cinzel', serif" fill="#68553d">W</text>
+                    </svg>
+                </div>
+
+                <!-- Map Legend -->
+                <div class="map-legend">
+                    <div class="legend-item"><span class="legend-swatch player-swatch"></span> You Are Here</div>
+                    <div class="legend-item"><span class="legend-swatch explored-swatch"></span> Explored Chamber</div>
+                    <div class="legend-item"><span class="legend-swatch secret-swatch"></span> Arcane Secret Found</div>
+                    <div class="legend-item"><span class="legend-swatch locked-swatch"></span> Sealed Doorway</div>
+                    <div class="legend-item"><span class="legend-swatch unreached-swatch"></span> Unexplored Rumor</div>
+                </div>
+
+                <!-- Hover Room Info Popup -->
+                <div id="map-room-tooltip" class="map-tooltip hidden">
+                    <strong id="tooltip-title">Chamber Name</strong>
+                    <div id="tooltip-floor" class="tooltip-sub">Elevation</div>
+                    <p id="tooltip-desc">Description preview...</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="game.js?v=15"></script>
+    <!-- Epic Endgame / Victory Modal -->
+    <div id="victory-modal" class="hidden">
+        <canvas id="victory-canvas"></canvas>
+        <div class="victory-card">
+            <div class="victory-header">
+                <div class="victory-crest" id="victory-crest">👑</div>
+                <div class="victory-subtitle" id="victory-badge">CITADEL CONQUERED</div>
+                <h1 id="victory-title">The Radiant Sovereign</h1>
+            </div>
+
+            <div class="victory-body">
+                <p id="victory-prose" class="victory-story">
+                    You mount the steps of the Obsidian Throne as the ancient bells of Blackwood toll across the mountains...
+                </p>
+
+                <!-- Chronicle Scorecard -->
+                <div class="victory-stats-grid">
+                    <div class="vstat-card">
+                        <span class="vstat-num" id="vstat-rooms">95 / 95</span>
+                        <span class="vstat-label">Fortress Explored</span>
+                    </div>
+                    <div class="vstat-card gold-border">
+                        <span class="vstat-num gold-text" id="vstat-secrets">20 / 20</span>
+                        <span class="vstat-label">Secrets Discovered</span>
+                    </div>
+                    <div class="vstat-card">
+                        <span class="vstat-num" id="vstat-ending">True Ascension</span>
+                        <span class="vstat-label">Destiny Unlocked</span>
+                    </div>
+                    <div class="vstat-card">
+                        <span class="vstat-num" id="vstat-turns">142</span>
+                        <span class="vstat-label">Total Actions Taken</span>
+                    </div>
+                </div>
+
+                <div class="relics-showcase">
+                    <h4>Royal Regalia & Arcane Relics Assembled:</h4>
+                    <div id="relics-list" class="relics-chips"></div>
+                </div>
+            </div>
+
+            <div class="victory-footer">
+                <button class="victory-btn secondary" onclick="closeVictoryModal()">Continue Free Roam</button>
+                <button class="victory-btn secondary" onclick="exportSaveToFile()">Download Chronicle</button>
+                <button class="victory-btn primary" onclick="confirmResetGame()">Embark on New Journey</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js?v=20"></script>
 </body>
 </html>
