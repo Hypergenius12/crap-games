@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Showcase</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <style>
+        /* =========================================
+           BASE / DEFAULT HTML5 THEME & SCROLL FIX
+           ========================================= */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --section-bg: #ffffff;
+            --section-border: #ccc;
+            --section-radius: 0;
+            --font-family: sans-serif;
+            --spacing: 2rem;
+            --heading-border: #eee;
+        }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: var(--spacing);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s, background-image 0.3s;
+        }
+        section {
+            background-color: var(--section-bg);
+            margin-bottom: var(--spacing);
+            padding: 1.5rem;
+            border: 1px solid var(--section-border);
+            border-radius: var(--section-radius);
+            transition: all 0.3s;
+        }
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px solid var(--heading-border);
+            padding-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .scroll-container {
+            width: 100%;
+            height: 150px;
+            overflow: auto;
+            border: 1px solid var(--section-border);
+            border-radius: var(--section-radius);
+            background-color: var(--bg-color);
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        .scroll-content {
+            padding: 15px;
+            min-width: 150%;
+        }
+
+        /* THEME CYCLER */
+        #theme-switcher {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+            font-family: sans-serif;
+            box-sizing: border-box;
+        }
+        #theme-switcher select, #theme-switcher button {
+            padding: 5px 10px;
+            font-size: 14px;
+            background: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* 1. APPLE */
+        body.theme-apple { --bg-color: #ECECEC; --text-color: #1C1C1E; --section-bg: #FFFFFF; --section-border: #E5E5EA; --section-radius: 10px; --heading-border: #E5E5EA; --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background-image: none; }
+        .theme-apple button { background-color: #FFFFFF; color: #1C1C1E; border: 1px solid #C6C6C8; padding: 5px 14px; border-radius: 5px; font-size: 13px; box-shadow: 0 1px 1px rgba(0,0,0,0.05); cursor: pointer; }
+        .theme-apple button.primary { background-color: #007AFF; color: #FFFFFF; border: 1px solid #007AFF; }
+        .theme-apple input[type="text"], .theme-apple input[type="password"], .theme-apple textarea, .theme-apple select { background-color: #FFFFFF; border: 1px solid #C6C6C8; padding: 5px 10px; border-radius: 5px; font-size: 13px; outline: none; width: 100%; max-width: 300px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
+        .theme-apple input:focus, .theme-apple textarea:focus, .theme-apple select:focus { border-color: #007AFF; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3); }
+        .theme-apple input[type="range"] { appearance: none; height: 4px; background: #D1D1D6; border-radius: 2px; width: 300px; }
+        .theme-apple input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: #FFFFFF; border: 1px solid #C6C6C8; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .theme-apple ::-webkit-scrollbar { width: 14px; height: 14px; }
+        .theme-apple ::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.3); border-radius: 10px; border: 4px solid transparent; background-clip: padding-box; }
+
+        /* 2. GITHUB */
+        body.theme-github { --bg-color: #0d1117; --text-color: #e6edf3; --section-bg: #161b22; --section-border: #30363d; --section-radius: 6px; --heading-border: #21262d; --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; background-image: none; }
+        .theme-github button { background-color: #21262d; color: #c9d1d9; border: 1px solid rgba(240, 246, 252, 0.1); padding: 5px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+        .theme-github button.primary { background-color: #238636; color: #ffffff; }
+        .theme-github input[type="text"], .theme-github textarea, .theme-github select { background-color: #0d1117; border: 1px solid #30363d; padding: 5px 12px; border-radius: 6px; color: #e6edf3; width: 100%; max-width: 300px; outline: none; }
+        .theme-github input:focus, .theme-github textarea:focus { border-color: #58a6ff; box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3); }
+        .theme-github input[type="checkbox"], .theme-github input[type="radio"], .theme-github input[type="range"] { accent-color: #58a6ff; }
+        .theme-github ::-webkit-scrollbar { width: 14px; height: 14px; }
+        .theme-github ::-webkit-scrollbar-thumb { background-color: #484f58; border: 4px solid #0d1117; border-radius: 10px; }
+
+        /* 3. WINDOWS 11 */
+        body.theme-windows11 { --bg-color: #f3f3f3; --text-color: #242424; --section-bg: #ffffff; --section-border: #e5e5e5; --section-radius: 8px; --heading-border: #e0e0e0; --font-family: "Segoe UI Variable", "Segoe UI", sans-serif; background-image: none; }
+        .theme-windows11 button { background-color: #fbfbfb; color: #242424; border: 1px solid #d1d1d1; border-bottom-color: #c3c3c3; padding: 5px 20px; border-radius: 4px; cursor: pointer; }
+        .theme-windows11 button.primary { background-color: #0067c0; color: #ffffff; border-color: #0067c0; border-bottom-color: #005095; }
+        .theme-windows11 input[type="text"], .theme-windows11 textarea, .theme-windows11 select { background-color: #ffffff; border: 1px solid #d1d1d1; border-bottom: 1px solid #8c8c8c; padding: 5px 12px; border-radius: 4px; width: 100%; max-width: 300px; outline: none; }
+        .theme-windows11 input:focus, .theme-windows11 textarea:focus { border-bottom: 2px solid #0067c0; padding-bottom: 4px; }
+        .theme-windows11 input[type="range"] { appearance: none; height: 4px; background: #e0e0e0; border-radius: 2px; width: 300px; }
+        .theme-windows11 input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: #0067c0; border-radius: 50%; border: 6px solid #fff; box-shadow: 0 0 0 1px #d1d1d1; }
+        .theme-windows11 ::-webkit-scrollbar-thumb { background-color: #8a8a8a; border: 6px solid transparent; background-clip: padding-box; border-radius: 10px; }
+
+        /* 4. AI WEBSITE */
+        body.theme-ai { --bg-color: #050505; --text-color: #EDEDED; --section-bg: #0A0A0A; --section-border: #222; --section-radius: 12px; --heading-border: #1a1a1a; --font-family: 'Inter', system-ui, -apple-system, sans-serif; background-image: none; }
+        .theme-ai section { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+        .theme-ai button { background-color: #111; color: #ededed; border: 1px solid #333; padding: 8px 18px; border-radius: 8px; cursor: pointer; }
+        .theme-ai button.primary { background: linear-gradient(135deg, #a855f7, #3b82f6); border: none; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+        .theme-ai input[type="text"], .theme-ai textarea { background-color: #0a0a0a; border: 1px solid #333; padding: 8px 12px; border-radius: 8px; color: #ededed; width: 100%; max-width: 300px; outline: none; }
+        .theme-ai input:focus { border-color: #a855f7; box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2); }
+        .theme-ai input[type="checkbox"], .theme-ai input[type="radio"], .theme-ai input[type="range"] { accent-color: #a855f7; }
+        .theme-ai ::-webkit-scrollbar { width: 8px; height: 8px; }
+        .theme-ai ::-webkit-scrollbar-thumb { background-color: #333; border-radius: 4px; }
+
+        /* 5. MINIMALIST */
+        body.theme-minimal { --bg-color: #ffffff; --text-color: #000000; --section-bg: #ffffff; --section-border: #000000; --section-radius: 0px; --heading-border: #000000; --font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; background-image: none; }
+        .theme-minimal section { border-width: 2px; box-shadow: 4px 4px 0px #000000; }
+        .theme-minimal button { background-color: #ffffff; border: 2px solid #000000; padding: 8px 20px; font-weight: bold; cursor: pointer; }
+        .theme-minimal button.primary { background-color: #000000; color: #ffffff; }
+        .theme-minimal input[type="text"], .theme-minimal textarea { border: 2px solid #000000; padding: 8px 12px; width: 100%; max-width: 300px; outline: none; }
+        .theme-minimal input:focus { outline: 2px solid #000000; outline-offset: 2px; }
+        .theme-minimal input[type="range"] { appearance: none; height: 2px; background: #000000; width: 300px; }
+        .theme-minimal input[type="range"]::-webkit-slider-thumb { appearance: none; width: 16px; height: 32px; background: #000000; cursor: pointer; }
+        .theme-minimal .scroll-container { border-width: 2px; }
+        .theme-minimal ::-webkit-scrollbar { width: 16px; height: 16px; }
+        .theme-minimal ::-webkit-scrollbar-track { border-left: 2px solid #000; }
+        .theme-minimal ::-webkit-scrollbar-thumb { background-color: #000000; }
+
+        /* 6. GOOGLE MATERIAL */
+        body.theme-material { --bg-color: #f5f5f6; --text-color: #202124; --section-bg: #ffffff; --section-border: transparent; --section-radius: 8px; --heading-border: transparent; --font-family: 'Roboto', sans-serif; }
+        .theme-material section { box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15); }
+        .theme-material h2 { color: #1a73e8; }
+        .theme-material button { background-color: #fff; color: #1a73e8; border: none; padding: 0 24px; height: 36px; border-radius: 4px; font-weight: 500; text-transform: uppercase; box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3); cursor: pointer; }
+        .theme-material button.primary { background-color: #1a73e8; color: #fff; }
+        .theme-material input[type="text"], .theme-material textarea { background-color: #f1f3f4; border: none; border-bottom: 1px solid #80868b; border-radius: 4px 4px 0 0; padding: 8px 12px; outline: none; width: 100%; max-width: 300px; }
+        .theme-material input:focus { border-bottom: 2px solid #1a73e8; background-color: #e8f0fe; padding-bottom: 7px; }
+        .theme-material input[type="checkbox"], .theme-material input[type="radio"], .theme-material input[type="range"] { accent-color: #1a73e8; }
+        .theme-material .scroll-container { border: 1px solid #e0e0e0; border-radius: 4px; }
+        .theme-material ::-webkit-scrollbar { width: 8px; height: 8px; }
+        .theme-material ::-webkit-scrollbar-thumb { background-color: #bdc1c6; border-radius: 4px; }
+
+        /* 7. GLASSMORPHISM */
+        body.theme-glass { --bg-color: transparent; --text-color: #ffffff; --section-bg: rgba(255, 255, 255, 0.1); --section-border: rgba(255, 255, 255, 0.2); --section-radius: 16px; --heading-border: rgba(255, 255, 255, 0.2); --font-family: 'Poppins', sans-serif; background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #556270); background-attachment: fixed; }
+        .theme-glass section { backdrop-filter: blur(12px); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); }
+        .theme-glass button { background: rgba(255, 255, 255, 0.15); color: #fff; border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 20px; border-radius: 30px; cursor: pointer; }
+        .theme-glass button.primary { background: rgba(255, 255, 255, 0.4); font-weight: bold; }
+        .theme-glass input[type="text"], .theme-glass textarea { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; padding: 8px 15px; border-radius: 12px; outline: none; width: 100%; max-width: 300px; }
+        .theme-glass input:focus { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); }
+        .theme-glass .scroll-container { background: rgba(255,255,255,0.05); }
+        .theme-glass ::-webkit-scrollbar { width: 10px; height: 10px; }
+        .theme-glass ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 10px; }
+
+        /* 8. WEB3 / CRYPTO */
+        body.theme-web3 { --bg-color: #030014; --text-color: #e2e8f0; --section-bg: rgba(15, 23, 42, 0.8); --section-border: #1e293b; --section-radius: 12px; --heading-border: #1e293b; --font-family: 'Space Grotesk', system-ui, sans-serif; background-image: none; }
+        .theme-web3 section { box-shadow: 0 0 20px rgba(56, 189, 248, 0.05); }
+        .theme-web3 button { background: #0f172a; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 8px 20px; border-radius: 8px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 10px rgba(56, 189, 248, 0.1); }
+        .theme-web3 button.primary { background: linear-gradient(90deg, #38bdf8, #818cf8); color: #030014; font-weight: bold; }
+        .theme-web3 input[type="text"], .theme-web3 textarea { background: #020617; border: 1px solid #1e293b; color: #38bdf8; padding: 8px 12px; border-radius: 6px; font-family: monospace; outline: none; width: 100%; max-width: 300px; }
+        .theme-web3 input:focus { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        .theme-web3 .scroll-container { background: #020617; }
+        .theme-web3 ::-webkit-scrollbar { width: 8px; height: 8px; }
+        .theme-web3 ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
+
+        /* 9. WINDOWS 95 */
+        body.theme-win95 { --bg-color: #008080; --text-color: #000000; --section-bg: #c0c0c0; --section-border: transparent; --section-radius: 0; --heading-border: transparent; --font-family: 'MS Sans Serif', Tahoma, sans-serif; background-image: none; }
+        .theme-win95 section { border-top: 2px solid #ffffff; border-left: 2px solid #ffffff; border-right: 2px solid #000000; border-bottom: 2px solid #000000; padding: 2px; }
+        .theme-win95 section > h2 { background: #000080; color: white; padding: 3px 5px; font-size: 14px; margin: 0 0 1rem 0; }
+        .theme-win95 section > .grid, .theme-win95 section > p { padding: 0 1rem 1rem 1rem; }
+        .theme-win95 button { background-color: #c0c0c0; color: #000; border-top: 2px solid #ffffff; border-left: 2px solid #ffffff; border-right: 2px solid #000000; border-bottom: 2px solid #000000; padding: 4px 12px; cursor: pointer; box-sizing: border-box; }
+        .theme-win95 button:active { border-top: 2px solid #000000; border-left: 2px solid #000000; border-right: 2px solid #ffffff; border-bottom: 2px solid #ffffff; padding: 5px 11px 3px 13px; }
+        .theme-win95 input[type="text"], .theme-win95 textarea { background: #fff; border-top: 2px solid #000; border-left: 2px solid #000; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 4px; width: 100%; max-width: 300px; }
+        .theme-win95 input[type="range"]::-webkit-slider-thumb { appearance: none; width: 12px; height: 22px; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #000; border-bottom: 2px solid #000; }
+        .theme-win95 .scroll-container { border-top: 2px solid #000; border-left: 2px solid #000; border-right: 2px solid #fff; border-bottom: 2px solid #fff; background: #fff; }
+        .theme-win95 ::-webkit-scrollbar { width: 16px; height: 16px; }
+        .theme-win95 ::-webkit-scrollbar-track { background: repeating-linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%, #c0c0c0), repeating-linear-gradient(45deg, #c0c0c0 25%, #ffffff 25%, #ffffff 75%, #c0c0c0 75%, #c0c0c0); background-position: 0 0, 2px 2px; background-size: 4px 4px; }
+        .theme-win95 ::-webkit-scrollbar-thumb { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #000; border-bottom: 2px solid #000; }
+
+        /* 10. WINDOWS XP */
+        body.theme-winxp { --bg-color: #ece9d8; --text-color: #000000; --section-bg: #ece9d8; --section-border: transparent; --section-radius: 3px; --heading-border: transparent; --font-family: Tahoma, sans-serif; background-image: none; }
+        .theme-winxp section { background: #fbfbfc; border: 1px solid #003c74; border-radius: 8px 8px 3px 3px; padding: 0; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+        .theme-winxp section > .grid, .theme-winxp section > p, .theme-winxp section > .scroll-container { padding: 0 1.5rem 1.5rem 1.5rem; margin-bottom: 1.5rem; width: calc(100% - 3rem); box-sizing: border-box; }
+        .theme-winxp section > h2 { background: linear-gradient(to bottom, #0058e6 0%, #3a93ff 15%, #288eff 50%, #1770e0 100%); color: white; margin: 0 0 1.5rem 0; padding: 5px 10px; border-radius: 7px 7px 0 0; font-size: 13px; font-weight: bold; }
+        .theme-winxp button { background: linear-gradient(to bottom, #f2f2f2, #ebebeb, #dddddd, #cfcfcf); border: 1px solid #003c74; border-radius: 3px; padding: 4px 15px; cursor: pointer; }
+        .theme-winxp button.primary { border: 2px solid #003c74; padding: 3px 14px; }
+        .theme-winxp input[type="text"], .theme-winxp textarea { background: #fff; border: 1px solid #7f9db9; padding: 4px 6px; font-size: 12px; outline: none; width: 100%; max-width: 300px; }
+        .theme-winxp input:focus { border-color: #ffb000; }
+        .theme-winxp .scroll-container { border: 1px solid #7f9db9; background: #fff; margin: 0 1.5rem 1.5rem 1.5rem; width: calc(100% - 3rem); }
+        .theme-winxp ::-webkit-scrollbar { width: 17px; height: 17px; }
+        .theme-winxp ::-webkit-scrollbar-track { background: #efebd6; border-left: 1px solid #fff; }
+        .theme-winxp ::-webkit-scrollbar-thumb { background: linear-gradient(to right, #9cbcef, #6b9be5); border: 1px solid #003c74; border-radius: 3px; }
+
+        /* 11. CYBERPUNK */
+        body.theme-cyberpunk { --bg-color: #0f0f16; --text-color: #00ffcc; --section-bg: #1a1a24; --section-border: #ff0055; --section-radius: 0; --heading-border: #fcee0a; --font-family: 'Courier New', Courier, monospace; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,204,0.03) 2px, rgba(0,255,204,0.03) 4px); }
+        .theme-cyberpunk section { border: 2px solid #ff0055; box-shadow: 0 0 10px rgba(255, 0, 85, 0.4), inset 0 0 10px rgba(255, 0, 85, 0.2); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%); }
+        .theme-cyberpunk h2 { color: #fcee0a; text-transform: uppercase; text-shadow: 2px 2px 0px #ff0055; }
+        .theme-cyberpunk button { background-color: transparent; color: #00ffcc; border: 2px solid #00ffcc; padding: 8px 20px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 5px rgba(0, 255, 204, 0.5); }
+        .theme-cyberpunk button.primary { background-color: #ff0055; color: #fff; border-color: #ff0055; box-shadow: 0 0 10px #ff0055; }
+        .theme-cyberpunk input[type="text"], .theme-cyberpunk textarea { background: rgba(0, 255, 204, 0.05); border: 1px solid #00ffcc; color: #fcee0a; padding: 10px; outline: none; width: 100%; max-width: 300px; }
+        .theme-cyberpunk input:focus { box-shadow: 0 0 10px rgba(252, 238, 10, 0.5); border-color: #fcee0a; }
+
+        /* 12. NEUMORPHISM */
+        body.theme-neumorphism { --bg-color: #e0e5ec; --text-color: #4a5568; --section-bg: #e0e5ec; --section-border: transparent; --section-radius: 20px; --heading-border: transparent; --font-family: 'Segoe UI', system-ui, sans-serif; background-image: none; }
+        .theme-neumorphism section { box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5); }
+        .theme-neumorphism h2 { color: #2d3748; }
+        .theme-neumorphism button { background-color: #e0e5ec; color: #4a5568; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 5px 5px 10px rgb(163,177,198,0.6), -5px -5px 10px rgba(255,255,255, 0.5); }
+        .theme-neumorphism button:active { box-shadow: inset 5px 5px 10px rgb(163,177,198,0.6), inset -5px -5px 10px rgba(255,255,255, 0.5); }
+        .theme-neumorphism button.primary { color: #3182ce; }
+        .theme-neumorphism input[type="text"], .theme-neumorphism textarea { background-color: #e0e5ec; border: none; padding: 12px 16px; border-radius: 12px; color: #2d3748; outline: none; width: 100%; max-width: 300px; box-shadow: inset 5px 5px 10px rgb(163,177,198,0.6), inset -5px -5px 10px rgba(255,255,255, 0.5); }
+        .theme-neumorphism .scroll-container { box-shadow: inset 5px 5px 10px rgb(163,177,198,0.6), inset -5px -5px 10px rgba(255,255,255, 0.5); }
+
+        /* 13. CLAYMORPHISM */
+        body.theme-clay { --bg-color: #f2e8cf; --text-color: #386641; --section-bg: #ffffff; --section-border: transparent; --section-radius: 32px; --heading-border: #f2e8cf; --font-family: 'Nunito', 'Comic Sans MS', sans-serif; background-image: none; }
+        .theme-clay section { box-shadow: 8px 8px 16px rgba(0,0,0,0.05), inset -6px -6px 12px rgba(0,0,0,0.05), inset 6px 6px 12px rgba(255,255,255,0.8); }
+        .theme-clay button { background-color: #f2e8cf; color: #386641; border: none; padding: 12px 24px; border-radius: 24px; font-weight: 800; cursor: pointer; box-shadow: 4px 8px 0px #bc4749, inset -4px -4px 8px rgba(0,0,0,0.1), inset 4px 4px 8px rgba(255,255,255,0.8); margin-bottom: 8px; }
+        .theme-clay button:active { transform: translateY(6px); box-shadow: 0px 2px 0px #bc4749, inset -4px -4px 8px rgba(0,0,0,0.1), inset 4px 4px 8px rgba(255,255,255,0.8); }
+        .theme-clay button.primary { background-color: #a7c957; color: #ffffff; box-shadow: 4px 8px 0px #6a994e, inset -4px -4px 8px rgba(0,0,0,0.1), inset 4px 4px 8px rgba(255,255,255,0.8); }
+        .theme-clay input[type="text"], .theme-clay textarea { background-color: #f2e8cf; border: none; padding: 12px 16px; border-radius: 16px; color: #386641; outline: none; width: 100%; max-width: 300px; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.1), inset -4px -4px 8px rgba(255,255,255,0.6); }
+
+        /* 14. TERMINAL */
+        body.theme-terminal { --bg-color: #000000; --text-color: #00FF41; --section-bg: #000000; --section-border: #00FF41; --section-radius: 0; --heading-border: #00FF41; --font-family: 'Consolas', 'Courier New', monospace; background-image: none; }
+        .theme-terminal section { border: 1px dashed #00FF41; box-shadow: none; }
+        .theme-terminal h2::before { content: "> "; }
+        .theme-terminal button { background-color: #000000; color: #00FF41; border: 1px solid #00FF41; padding: 8px 16px; font-family: inherit; cursor: pointer; text-transform: uppercase; }
+        .theme-terminal button.primary { font-weight: bold; }
+        .theme-terminal input[type="text"], .theme-terminal textarea { background-color: #000000; border: none; border-bottom: 1px solid #00FF41; color: #00FF41; padding: 8px; font-family: inherit; outline: none; width: 100%; max-width: 300px; }
+        .theme-terminal input:focus { background-color: rgba(0, 255, 65, 0.1); }
+        .theme-terminal .scroll-container { border: 1px dashed #00FF41; }
+
+        /* 15. NOTION */
+        body.theme-notion { --bg-color: #ffffff; --text-color: #37352f; --section-bg: #ffffff; --section-border: transparent; --section-radius: 4px; --heading-border: transparent; --font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-image: none; }
+        .theme-notion h2 { font-family: ui-serif, Georgia, serif; font-size: 1.5rem; font-weight: 600; color: #37352f; }
+        .theme-notion button { background-color: transparent; color: #37352f; border: 1px solid rgba(55, 53, 47, 0.16); padding: 4px 12px; border-radius: 4px; font-size: 14px; cursor: pointer; }
+        .theme-notion button.primary { background-color: #2eaadc; color: #ffffff; border: none; }
+        .theme-notion input[type="text"], .theme-notion textarea { background-color: transparent; border: 1px solid rgba(55, 53, 47, 0.16); padding: 6px 10px; border-radius: 4px; color: #37352f; outline: none; width: 100%; max-width: 300px; }
+        .theme-notion input:focus { border-color: rgba(55, 53, 47, 0.4); box-shadow: rgba(46, 170, 220, 0.3) 0px 0px 0px 2px; }
+
+        /* 16. NINTENDO SWITCH */
+        body.theme-switch { --bg-color: #2b2b2b; --text-color: #ffffff; --section-bg: #323232; --section-border: transparent; --section-radius: 12px; --heading-border: #444; --font-family: 'Arial', sans-serif; background-image: none; }
+        .theme-switch button { background-color: #4a4a4a; color: #ffffff; border: 3px solid transparent; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+        .theme-switch button.primary { background-color: #ff3c28; }
+        .theme-switch input[type="text"], .theme-switch textarea { background-color: #4a4a4a; border: 3px solid transparent; padding: 10px 15px; border-radius: 12px; color: #ffffff; outline: none; width: 100%; max-width: 300px; font-weight: bold; }
+        .theme-switch input:focus { border: 3px solid #00d7d4; background-color: #fff; color: #000; }
+
+        /* 17. WINDOWS 7 */
+        body.theme-win7 { --bg-color: #0b519e; --text-color: #000; --section-bg: rgba(255, 255, 255, 0.6); --section-border: rgba(255, 255, 255, 0.8); --section-radius: 8px; --heading-border: transparent; --font-family: 'Segoe UI', Tahoma, sans-serif; background: radial-gradient(circle at center, #268be0 0%, #0b519e 100%); background-attachment: fixed; }
+        .theme-win7 section { backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 0 5px rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.8); }
+        .theme-win7 button { background: linear-gradient(to bottom, #f2f6f8 0%, #d8e1e7 49%, #b5c6d0 50%, #e0eff9 100%); border: 1px solid #707070; border-radius: 3px; padding: 5px 15px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.1); color: #000; cursor: pointer; }
+        .theme-win7 button.primary { border: 2px solid #3c7fb1; padding: 4px 14px; }
+        .theme-win7 input[type="text"], .theme-win7 textarea { border: 1px solid #abadb3; padding: 5px; border-radius: 2px; background: #fff; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); outline: none; width: 100%; max-width: 300px; }
+        .theme-win7 input:focus { border-color: #3de; box-shadow: 0 0 5px rgba(51, 221, 255, 0.5), inset 0 1px 2px rgba(0,0,0,0.1); }
+        .theme-win7 .scroll-container { background: #fff; }
+
+        /* 18. MATERIAL YOU */
+        body.theme-material-you { --bg-color: #fbfdf7; --text-color: #1a1c18; --section-bg: #f0f3e8; --section-border: transparent; --section-radius: 28px; --heading-border: transparent; --font-family: 'Roboto', system-ui, sans-serif; background-image: none; }
+        .theme-material-you h2 { color: #386a20; }
+        .theme-material-you button { background-color: #d7e8cd; color: #111f09; border: none; padding: 12px 24px; border-radius: 100px; font-weight: 500; cursor: pointer; }
+        .theme-material-you button.primary { background-color: #386a20; color: #ffffff; }
+        .theme-material-you input[type="text"], .theme-material-you textarea { background-color: #e0e4d7; border: none; border-bottom: 2px solid #74796d; border-radius: 4px 4px 0 0; padding: 12px 16px; color: #1a1c18; outline: none; width: 100%; max-width: 300px; }
+        .theme-material-you input:focus { border-bottom: 2px solid #386a20; background-color: #d3d8ca; }
+        .theme-material-you .scroll-container { background: #e0e4d7; border-radius: 12px; }
+        .theme-material-you ::-webkit-scrollbar-thumb { background-color: #74796d; border-radius: 10px; }
+
+        /* 19. SPOTIFY */
+        body.theme-spotify { --bg-color: #121212; --text-color: #ffffff; --section-bg: #181818; --section-border: transparent; --section-radius: 8px; --heading-border: transparent; --font-family: 'Circular', 'Helvetica Neue', Helvetica, Arial, sans-serif; background-image: none; }
+        .theme-spotify button { background-color: transparent; color: #ffffff; border: 1px solid #727272; padding: 8px 24px; border-radius: 500px; font-weight: bold; font-size: 14px; cursor: pointer; }
+        .theme-spotify button.primary { background-color: #1DB954; color: #000000; border: none; }
+        .theme-spotify input[type="text"], .theme-spotify textarea { background-color: #333333; border: 1px solid transparent; padding: 12px; border-radius: 4px; color: #ffffff; outline: none; width: 100%; max-width: 300px; font-weight: 500; }
+        .theme-spotify input:focus { border: 1px solid #555555; background-color: #3e3e3e; }
+        .theme-spotify .scroll-container { background: #181818; border: none; }
+
+        /* 20. DISCORD CLASSIC */
+        body.theme-discord { --bg-color: #313338; --text-color: #dbdee1; --section-bg: #2b2d31; --section-border: transparent; --section-radius: 8px; --heading-border: transparent; --font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; background-image: none; }
+        .theme-discord h2 { color: #f2f3f5; font-size: 16px; font-weight: 700; text-transform: uppercase; }
+        .theme-discord button { background-color: #4e5058; color: #ffffff; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; font-size: 14px; cursor: pointer; }
+        .theme-discord button.primary { background-color: #5865F2; }
+        .theme-discord input[type="text"], .theme-discord textarea { background-color: #1e1f22; border: none; padding: 10px; border-radius: 4px; color: #dbdee1; outline: none; width: 100%; max-width: 300px; }
+        .theme-discord .scroll-container { background: #2b2d31; border: none; }
+        .theme-discord ::-webkit-scrollbar-thumb { background-color: #1a1b1e; border-radius: 4px; }
+
+        /* 21. FRUTIGER AERO */
+        body.theme-frutiger { --bg-color: #d2f1f8; --text-color: #0c3c53; --section-bg: rgba(255, 255, 255, 0.7); --section-border: #80cedc; --section-radius: 20px; --heading-border: transparent; --font-family: 'Trebuchet MS', 'Lucida Grande', sans-serif; background: linear-gradient(to bottom, #69c3e9, #d2f1f8, #a7e4b9); background-attachment: fixed; }
+        .theme-frutiger section { box-shadow: 0 4px 15px rgba(0,0,0,0.1), inset 0 0 10px rgba(255,255,255,1); backdrop-filter: blur(5px); }
+        .theme-frutiger button { background: linear-gradient(to bottom, #ffffff 0%, #e1f4fb 40%, #c4e9f7 50%, #f0f9ff 100%); color: #0c3c53; border: 1px solid #7bc6e0; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1), inset 0 2px 3px rgba(255,255,255,1); }
+        .theme-frutiger button.primary { background: linear-gradient(to bottom, #9bdf54 0%, #7dc92e 45%, #66b414 50%, #90d341 100%); color: #fff; border: 1px solid #5aa110; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); }
+        .theme-frutiger input[type="text"], .theme-frutiger textarea { background-color: #fff; border: 1px solid #80cedc; padding: 8px 12px; border-radius: 10px; color: #0c3c53; outline: none; width: 100%; max-width: 300px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .theme-frutiger input:focus { border-color: #4da5c0; box-shadow: 0 0 8px rgba(77,165,192,0.4), inset 0 2px 4px rgba(0,0,0,0.05); }
+        .theme-frutiger .scroll-container { background: rgba(255,255,255,0.5); }
+
+        /* 22. BLOOMBERG TERMINAL */
+        body.theme-bloomberg { --bg-color: #000000; --text-color: #ff9900; --section-bg: #000000; --section-border: #ff9900; --section-radius: 0; --heading-border: #ff9900; --font-family: Arial, sans-serif; background-image: none; }
+        .theme-bloomberg section { padding: 8px; border-width: 1px; }
+        .theme-bloomberg h2 { font-size: 14px; text-transform: uppercase; margin: 0 0 10px 0; padding-bottom: 5px; }
+        .theme-bloomberg button { background-color: #000; color: #ff9900; border: 1px solid #ff9900; padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .theme-bloomberg button.primary { background-color: #ff9900; color: #000; }
+        .theme-bloomberg input[type="text"], .theme-bloomberg textarea { background-color: #000; border: 1px solid #ff9900; padding: 4px; color: #ff9900; outline: none; width: 100%; max-width: 300px; font-size: 12px; text-transform: uppercase; }
+        .theme-bloomberg input:focus { background-color: #1a1000; }
+        .theme-bloomberg .scroll-container { background: #000; border: 1px solid #ff9900; }
+        .theme-bloomberg ::-webkit-scrollbar { width: 12px; height: 12px; }
+        .theme-bloomberg ::-webkit-scrollbar-track { background: #000; border-left: 1px solid #ff9900; }
+        .theme-bloomberg ::-webkit-scrollbar-thumb { background-color: #ff9900; border-radius: 0; border: none; }
+
+        /* 23. MAC OS 9 (PLATINUM) */
+        body.theme-macos9 { --bg-color: #dddddd; --text-color: #000000; --section-bg: #eeeeee; --section-border: #000000; --section-radius: 0; --heading-border: #999999; --font-family: 'Charcoal', 'Chicago', 'Arial Black', sans-serif; background: repeating-linear-gradient(to bottom, #dddddd, #dddddd 1px, #eeeeee 1px, #eeeeee 2px); }
+        .theme-macos9 section { border-top: 1px solid #ffffff; border-left: 1px solid #ffffff; border-right: 1px solid #000000; border-bottom: 1px solid #000000; padding: 1.5rem; }
+        .theme-macos9 button { background: #dddddd; color: #000; border-top: 1px solid #ffffff; border-left: 1px solid #ffffff; border-right: 1px solid #000000; border-bottom: 1px solid #000000; padding: 4px 12px; font-weight: bold; cursor: pointer; box-shadow: inset 1px 1px 0 #ffffff; font-family: inherit; }
+        .theme-macos9 button:active { border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #ffffff; border-bottom: 1px solid #ffffff; box-shadow: none; padding: 5px 11px 3px 13px; }
+        .theme-macos9 button.primary { outline: 2px solid #000; outline-offset: -3px; }
+        .theme-macos9 input[type="text"], .theme-macos9 textarea, .theme-macos9 select { background: #ffffff; border-top: 2px solid #000; border-left: 2px solid #000; border-bottom: 2px solid #fff; border-right: 2px solid #fff; padding: 4px; outline: none; width: 100%; max-width: 300px; font-family: sans-serif; }
+        .theme-macos9 .scroll-container { border-top: 2px solid #000; border-left: 2px solid #000; border-bottom: 2px solid #fff; border-right: 2px solid #fff; background: #fff; }
+        .theme-macos9 ::-webkit-scrollbar-thumb { background: #dddddd; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #000; border-bottom: 1px solid #000; }
+        .theme-macos9 input[type="range"]::-webkit-slider-thumb { appearance: none; width: 12px; height: 22px; background: #dddddd; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #000; border-bottom: 1px solid #000; }
+
+        /* 24. PIP-BOY 3000 (FALLOUT) */
+        body.theme-pipboy { --bg-color: #0b1a0b; --text-color: #14ff14; --section-bg: #0b1a0b; --section-border: #14ff14; --section-radius: 8px; --heading-border: #14ff14; --font-family: 'Courier New', Courier, monospace; background-image: repeating-linear-gradient(0deg, rgba(20, 255, 20, 0.03), rgba(20, 255, 20, 0.03) 1px, transparent 1px, transparent 4px); text-shadow: 0 0 5px rgba(20, 255, 20, 0.5); }
+        .theme-pipboy section { border: 2px solid #14ff14; box-shadow: inset 0 0 10px rgba(20, 255, 20, 0.2), 0 0 10px rgba(20, 255, 20, 0.2); }
+        .theme-pipboy h2 { border-bottom: 2px solid #14ff14; display: inline-block; padding-right: 20px; font-weight: bold; text-transform: uppercase; }
+        .theme-pipboy button { background-color: transparent; color: #14ff14; border: 2px solid #14ff14; padding: 8px 16px; font-family: inherit; font-weight: bold; text-transform: uppercase; cursor: pointer; text-shadow: 0 0 5px rgba(20, 255, 20, 0.5); box-shadow: 0 0 5px rgba(20, 255, 20, 0.2); }
+        .theme-pipboy button:hover, .theme-pipboy button:active { background-color: #14ff14; color: #0b1a0b; text-shadow: none; box-shadow: 0 0 15px rgba(20, 255, 20, 0.8); }
+        .theme-pipboy button.primary { background-color: rgba(20, 255, 20, 0.2); }
+        .theme-pipboy input[type="text"], .theme-pipboy textarea, .theme-pipboy select { background-color: #0b1a0b; border: 2px solid #14ff14; color: #14ff14; padding: 8px; font-family: inherit; outline: none; width: 100%; max-width: 300px; text-shadow: 0 0 5px rgba(20, 255, 20, 0.5); }
+        .theme-pipboy input:focus, .theme-pipboy textarea:focus { background-color: rgba(20, 255, 20, 0.1); box-shadow: inset 0 0 5px rgba(20, 255, 20, 0.5); }
+        .theme-pipboy input[type="range"] { appearance: none; background: transparent; border: none; height: 2px; }
+        .theme-pipboy input[type="range"]::-webkit-slider-runnable-track { background: #14ff14; height: 2px; }
+        .theme-pipboy input[type="range"]::-webkit-slider-thumb { appearance: none; width: 12px; height: 24px; background: #0b1a0b; border: 2px solid #14ff14; margin-top: -11px; box-shadow: 0 0 5px rgba(20, 255, 20, 0.5); }
+        .theme-pipboy .scroll-container { border: 2px solid #14ff14; background: #0b1a0b; }
+        .theme-pipboy ::-webkit-scrollbar-thumb { background-color: #14ff14; border-radius: 0; box-shadow: 0 0 5px rgba(20, 255, 20, 0.5); }
+
+        /* 25. GAME BOY (RETRO HANDHELD) */
+        body.theme-gameboy { --bg-color: #8bac0f; --text-color: #0f380f; --section-bg: #9bbc0f; --section-border: #0f380f; --section-radius: 0; --heading-border: #0f380f; --font-family: 'Courier New', monospace; background-image: none; }
+        .theme-gameboy section { border: 4px solid #0f380f; box-shadow: 4px 4px 0 #306230; }
+        .theme-gameboy h2 { font-weight: bold; text-transform: uppercase; border-bottom: 4px solid #0f380f; }
+        .theme-gameboy button { background: #8bac0f; color: #0f380f; border: 4px solid #0f380f; padding: 8px 16px; font-weight: bold; text-transform: uppercase; box-shadow: 2px 2px 0 #306230; cursor: pointer; font-family: inherit; }
+        .theme-gameboy button:active { box-shadow: none; transform: translate(2px, 2px); }
+        .theme-gameboy input[type="text"], .theme-gameboy textarea, .theme-gameboy select { background: #8bac0f; color: #0f380f; border: 4px solid #0f380f; padding: 8px; font-weight: bold; outline: none; width: 100%; max-width: 300px; font-family: inherit; }
+        .theme-gameboy .scroll-container { border: 4px solid #0f380f; background: #8bac0f; }
+        .theme-gameboy ::-webkit-scrollbar-thumb { background-color: #0f380f; border-radius: 0; }
+        .theme-gameboy input[type="range"]::-webkit-slider-thumb { appearance: none; width: 16px; height: 32px; background: #0f380f; }
+
+        /* 26. E-INK / KINDLE */
+        body.theme-eink { --bg-color: #f4f4f4; --text-color: #111111; --section-bg: #ffffff; --section-border: #cccccc; --section-radius: 0; --heading-border: #111111; --font-family: Georgia, 'Times New Roman', serif; background-image: none; }
+        .theme-eink h2 { border-bottom: 2px solid #111; padding-bottom: 5px; }
+        .theme-eink button { background: #ffffff; color: #111; border: 2px solid #111; padding: 8px 24px; font-weight: bold; font-family: inherit; cursor: pointer; }
+        .theme-eink button:hover { background: #eeeeee; }
+        .theme-eink button.primary { background: #111111; color: #ffffff; }
+        .theme-eink button.primary:hover { background: #333333; }
+        .theme-eink input[type="text"], .theme-eink textarea, .theme-eink select { background: #fff; border: 2px solid #999; padding: 8px; font-family: inherit; font-size: 16px; outline: none; width: 100%; max-width: 300px; }
+        .theme-eink input:focus, .theme-eink textarea:focus { border-color: #111; }
+        .theme-eink .scroll-container { background: #fff; border: 2px solid #111; }
+        .theme-eink ::-webkit-scrollbar-thumb { background-color: #111; border-radius: 0; }
+        .theme-eink input[type="range"] { accent-color: #111; }
+
+        /* 27. SUPER MARIO 8-BIT */
+        body.theme-mario { --bg-color: #5c94fc; --text-color: #000; --section-bg: #f83800; --section-border: #000; --section-radius: 0; --heading-border: #000; --font-family: 'Courier New', monospace; background-image: none; }
+        .theme-mario section { background: repeating-linear-gradient(45deg, #c84c0c, #c84c0c 20px, #f83800 20px, #f83800 40px); border: 4px solid #000; box-shadow: 8px 8px 0 #000; padding: 4px; }
+        .theme-mario section > * { background: #fca044; border: 4px solid #000; padding: 1rem; margin-bottom: 0; }
+        .theme-mario h2 { background: #fca044; color: #000; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
+        .theme-mario button { background: #f83800; color: #fff; border: 4px solid #000; padding: 8px 16px; font-weight: bold; text-transform: uppercase; cursor: pointer; box-shadow: inset -4px -4px 0 rgba(0,0,0,0.3); font-family: inherit; }
+        .theme-mario button:active { box-shadow: inset 4px 4px 0 rgba(0,0,0,0.3); }
+        .theme-mario button.primary { background: #00a800; }
+        .theme-mario input[type="text"], .theme-mario textarea, .theme-mario select { background: #fff; border: 4px solid #000; padding: 8px; font-weight: bold; outline: none; width: 100%; max-width: 300px; font-family: inherit; }
+        .theme-mario .scroll-container { background: #fff; border: 4px solid #000; margin: 1rem; width: calc(100% - 2rem); }
+        .theme-mario ::-webkit-scrollbar-thumb { background-color: #f83800; border: 2px solid #000; }
+        .theme-mario input[type="range"]::-webkit-slider-thumb { appearance: none; width: 16px; height: 32px; background: #f83800; border: 4px solid #000; }
+
+        /* 28. iOS 6 (SKEUOMORPHISM) */
+        body.theme-ios6 { --bg-color: #7b818f; --text-color: #000; --section-bg: #fff; --section-border: #999; --section-radius: 10px; --heading-border: transparent; --font-family: 'Helvetica Neue', Helvetica, sans-serif; background-image: repeating-linear-gradient(45deg, #7b818f 25%, transparent 25%, transparent 75%, #7b818f 75%, #7b818f), repeating-linear-gradient(45deg, #7b818f 25%, #888d9a 25%, #888d9a 75%, #7b818f 75%, #7b818f); background-position: 0 0, 2px 2px; background-size: 4px 4px; }
+        .theme-ios6 section { box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .theme-ios6 h2 { color: #3b4e6d; text-shadow: 0 1px 0 #fff; font-weight: bold; }
+        .theme-ios6 button { background: linear-gradient(to bottom, #f9f9f9 0%, #e2e2e2 50%, #cecece 51%, #f0f0f0 100%); border: 1px solid #999; border-radius: 8px; padding: 8px 20px; font-weight: bold; color: #333; text-shadow: 0 1px 0 #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 1px 2px rgba(0,0,0,0.2); cursor: pointer; }
+        .theme-ios6 button:active { background: linear-gradient(to bottom, #d4d4d4 0%, #b8b8b8 50%, #a3a3a3 51%, #c9c9c9 100%); box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
+        .theme-ios6 button.primary { background: linear-gradient(to bottom, #7296cc 0%, #3e6bb5 50%, #2050a5 51%, #3f6eb7 100%); border-color: #173d7f; color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,0.5); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.3); }
+        .theme-ios6 button.primary:active { background: linear-gradient(to bottom, #4971a8 0%, #244b8e 50%, #11367c 51%, #25508c 100%); }
+        .theme-ios6 input[type="text"], .theme-ios6 textarea, .theme-ios6 select { background: #fff; border: 1px solid #999; padding: 8px 12px; border-radius: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); outline: none; width: 100%; max-width: 300px; }
+        .theme-ios6 input:focus, .theme-ios6 textarea:focus { border-color: #558de3; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 5px #558de3; }
+        .theme-ios6 .scroll-container { background: #fff; border-radius: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        .theme-ios6 ::-webkit-scrollbar-thumb { background: linear-gradient(to right, #999, #666); border-radius: 10px; }
+
+        /* 29. SYNTHESIZER / VST (HARDWARE) */
+        body.theme-synth { --bg-color: #2a2a2c; --text-color: #d1d1d1; --section-bg: #353538; --section-border: #1a1a1c; --section-radius: 4px; --heading-border: #1a1a1c; --font-family: 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(180deg, #2a2a2c 0%, #1e1e20 100%); background-attachment: fixed; }
+        .theme-synth section { border: 2px solid #454548; border-bottom-color: #1a1a1c; border-right-color: #1a1a1c; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.05), 5px 5px 15px rgba(0,0,0,0.5); padding: 20px; }
+        .theme-synth h2 { color: #ff5555; text-shadow: 0 0 5px rgba(255,85,85,0.4); font-size: 14px; text-transform: uppercase; letter-spacing: 2px; }
+        .theme-synth button { background: linear-gradient(180deg, #505055 0%, #3a3a3d 100%); color: #fff; border: 2px solid #222; border-top-color: #666; border-left-color: #666; padding: 8px 16px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.4); cursor: pointer; text-transform: uppercase; font-size: 11px; font-weight: bold; }
+        .theme-synth button:active { background: #353538; border: 2px solid #222; border-bottom-color: #555; border-right-color: #555; box-shadow: inset 0 3px 5px rgba(0,0,0,0.6); transform: translateY(2px); }
+        .theme-synth button.primary { color: #ff5555; }
+        .theme-synth button.primary:active { box-shadow: inset 0 3px 5px rgba(0,0,0,0.6), inset 0 0 10px rgba(255,85,85,0.5); }
+        .theme-synth input[type="text"], .theme-synth textarea, .theme-synth select { background: #111; color: #ffcc00; border: 2px solid #444; border-top-color: #000; border-left-color: #000; padding: 8px; border-radius: 3px; font-family: monospace; outline: none; width: 100%; max-width: 300px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); text-transform: uppercase; }
+        .theme-synth input:focus, .theme-synth textarea:focus { border-color: #555; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 5px rgba(255,204,0,0.3); }
+        .theme-synth input[type="range"] { appearance: none; height: 30px; background: #111; border-radius: 3px; border: 2px solid #333; border-top-color: #000; border-left-color: #000; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); }
+        .theme-synth input[type="range"]::-webkit-slider-thumb { appearance: none; width: 20px; height: 40px; background: linear-gradient(90deg, #222 0%, #444 20%, #444 80%, #222 100%); border: 1px solid #000; border-bottom: 3px solid #ffcc00; border-radius: 2px; box-shadow: 0 5px 10px rgba(0,0,0,0.8); }
+        .theme-synth .scroll-container { background: #1a1a1c; border: 2px solid #444; border-top-color: #000; border-left-color: #000; }
+        .theme-synth ::-webkit-scrollbar-thumb { background: #333; border: 1px solid #000; border-radius: 2px; }
+
+        /* 30. BLUEPRINT / CAD */
+        body.theme-blueprint { --bg-color: #0a4b7f; --text-color: #ffffff; --section-bg: rgba(10, 75, 127, 0.8); --section-border: #ffffff; --section-radius: 0; --heading-border: #ffffff; --font-family: 'Courier New', Courier, monospace; background-image: linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px; background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px; }
+        .theme-blueprint section { border: 2px solid #fff; padding: 1.5rem; backdrop-filter: blur(2px); }
+        .theme-blueprint h2 { text-transform: uppercase; font-weight: normal; letter-spacing: 1px; border-bottom: 2px solid #fff; padding-bottom: 5px; }
+        .theme-blueprint button { background: transparent; color: #fff; border: 2px solid #fff; padding: 8px 16px; font-family: inherit; text-transform: uppercase; cursor: pointer; }
+        .theme-blueprint button:active { background: rgba(255,255,255,0.2); }
+        .theme-blueprint button.primary { background: #fff; color: #0a4b7f; font-weight: bold; }
+        .theme-blueprint input[type="text"], .theme-blueprint textarea, .theme-blueprint select { background: rgba(255,255,255,0.1); border: 2px solid #fff; color: #fff; padding: 8px; font-family: inherit; outline: none; width: 100%; max-width: 300px; }
+        .theme-blueprint input:focus, .theme-blueprint textarea:focus { background: rgba(255,255,255,0.2); }
+        .theme-blueprint input[type="range"] { accent-color: #fff; }
+        .theme-blueprint input[type="range"]::-webkit-slider-thumb { appearance: none; width: 15px; height: 15px; background: #fff; border-radius: 50%; }
+        .theme-blueprint .scroll-container { background: rgba(0,0,0,0.2); border: 2px solid #fff; }
+
+        /* 31. Y2K IMAC G3 */
+        body.theme-y2k { --bg-color: #f0f0f0; --text-color: #333; --section-bg: rgba(255, 255, 255, 0.4); --section-border: rgba(0, 150, 200, 0.4); --section-radius: 20px; --heading-border: rgba(0, 150, 200, 0.4); --font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background: repeating-linear-gradient(45deg, #f0f0f0, #f0f0f0 10px, #e8e8e8 10px, #e8e8e8 20px); }
+        .theme-y2k section { border: 3px solid rgba(255,255,255,0.8); box-shadow: 0 10px 20px rgba(0,150,200,0.15), inset 0 0 20px rgba(255,255,255,0.8); backdrop-filter: blur(10px); background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(200,240,255,0.5)); }
+        .theme-y2k h2 { color: #007bb5; text-shadow: 1px 1px 0 #fff; }
+        .theme-y2k button { background: linear-gradient(180deg, #88d4f5 0%, #20a0d8 50%, #0088cc 51%, #33aadd 100%); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.3); font-weight: bold; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2), inset 0 2px 3px rgba(255,255,255,0.8), inset 0 -2px 3px rgba(0,0,0,0.2); font-family: inherit; }
+        .theme-y2k button:active { box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 4px 8px rgba(0,0,0,0.4); transform: translateY(2px); }
+        .theme-y2k button.primary { background: linear-gradient(180deg, #ffb366 0%, #ff8c1a 50%, #e67300 51%, #ff9933 100%); }
+        .theme-y2k input[type="text"], .theme-y2k textarea, .theme-y2k select { background: #fff; border: 2px solid #b3e0f2; border-radius: 15px; padding: 10px; color: #333; outline: none; width: 100%; max-width: 300px; box-shadow: inset 0 3px 6px rgba(0,0,0,0.1); font-family: inherit; }
+        .theme-y2k input:focus, .theme-y2k textarea:focus { border-color: #0088cc; box-shadow: inset 0 3px 6px rgba(0,0,0,0.1), 0 0 8px rgba(0,136,204,0.4); }
+        .theme-y2k input[type="range"]::-webkit-slider-thumb { appearance: none; width: 24px; height: 24px; background: radial-gradient(circle, #fff 20%, #20a0d8 80%); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .theme-y2k .scroll-container { background: rgba(255,255,255,0.6); border: 2px solid #b3e0f2; border-radius: 15px; box-shadow: inset 0 3px 6px rgba(0,0,0,0.1); }
+        .theme-y2k ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #88d4f5 0%, #20a0d8 100%); border-radius: 10px; border: 2px solid rgba(255,255,255,0.8); }
+
+    </style>
+</head>
+<body>
+
+    <!-- THEME CYCLER UI -->
+    <div id="theme-switcher">
+        <span>Select Theme:</span>
+        <select id="theme-select" onchange="changeTheme()">
+            <option value="">Default HTML5</option>
+            <option value="theme-apple">Apple (macOS HIG)</option>
+            <option value="theme-github">GitHub (Primer Dark)</option>
+            <option value="theme-windows11">Windows 11 (Fluent)</option>
+            <option value="theme-ai">AI Website (Sleek Dark)</option>
+            <option value="theme-minimal">Minimalist (Brutalist)</option>
+            <option value="theme-material">Google Material</option>
+            <option value="theme-glass">Glassmorphism</option>
+            <option value="theme-web3">Web3 / Crypto</option>
+            <option value="theme-win95">Windows 95</option>
+            <option value="theme-winxp">Windows XP (2001)</option>
+            <option value="theme-cyberpunk">Cyberpunk (80s Neon)</option>
+            <option value="theme-neumorphism">Neumorphism (Soft Extrude)</option>
+            <option value="theme-clay">Claymorphism (Bubbly 3D)</option>
+            <option value="theme-terminal">Terminal (CLI Hacker)</option>
+            <option value="theme-notion">Notion (Clean Doc)</option>
+            <option value="theme-switch">Gaming Console (Dark)</option>
+            <option value="theme-win7">Windows 7 (Aero Glass)</option>
+            <option value="theme-material-you">Material You (Matcha Android)</option>
+            <option value="theme-spotify">Spotify (Modern Music App)</option>
+            <option value="theme-discord">Discord (Classic Dark)</option>
+            <option value="theme-frutiger">Frutiger Aero (2000s Web Gloss)</option>
+            <option value="theme-bloomberg">Bloomberg Terminal (Finance)</option>
+            <option value="theme-macos9">Mac OS 9 (Platinum)</option>
+            <option value="theme-pipboy">Pip-Boy 3000 (Fallout)</option>
+            <option value="theme-gameboy">Game Boy (Retro Handheld)</option>
+            <option value="theme-eink">E-Ink / Kindle</option>
+            <option value="theme-mario">Super Mario 8-Bit</option>
+            <option value="theme-ios6">iOS 6 (Skeuomorphism)</option>
+            <option value="theme-synth">Synthesizer / VST</option>
+            <option value="theme-blueprint">CAD Blueprint</option>
+            <option value="theme-y2k">Y2K iMac G3</option>
+        </select>
+        <button onclick="cycleTheme()">Next Theme</button>
+    </div>
+
+    <script>
+        const themes = [
+            "", "theme-apple", "theme-github", "theme-windows11", "theme-ai", 
+            "theme-minimal", "theme-material", "theme-glass", "theme-web3", 
+            "theme-win95", "theme-winxp", "theme-cyberpunk", "theme-neumorphism", 
+            "theme-clay", "theme-terminal", "theme-notion", "theme-switch",
+            "theme-win7", "theme-material-you", "theme-spotify", "theme-discord",
+            "theme-frutiger", "theme-bloomberg", "theme-macos9", "theme-pipboy",
+            "theme-gameboy", "theme-eink", "theme-mario", "theme-ios6",
+            "theme-synth", "theme-blueprint", "theme-y2k"
+        ];
+        let currentThemeIndex = 0;
+
+        function changeTheme() {
+            const select = document.getElementById("theme-select");
+            const newTheme = select.value;
+            document.body.className = newTheme;
+            currentThemeIndex = themes.indexOf(newTheme);
+        }
+
+        function cycleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const newTheme = themes[currentThemeIndex];
+            document.body.className = newTheme;
+            document.getElementById("theme-select").value = newTheme;
+        }
+    </script>
+
+    <h1 style="background: inherit; color: inherit;">UI Core Component Showcase</h1>
+    <p style="background: inherit; color: inherit;">A focused look at how different design systems render core interactive elements.</p>
+
+    <section>
+        <h2>Buttons</h2>
+        <div class="grid" style="flex-direction: row; gap: 15px; align-items: flex-end;">
+            <button class="primary">Primary Action</button>
+            <button class="default">Default Button</button>
+            <button class="default" disabled>Disabled</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Text Inputs</h2>
+        <div class="grid">
+            <input type="text" placeholder="Standard text input...">
+            <input type="password" value="password123">
+            <textarea rows="3">A standard textarea block. Try focusing on these inputs to see the specific focus rings.</textarea>
+        </div>
+    </section>
+
+    <section>
+        <h2>Selection Controls</h2>
+        <div class="grid" style="flex-direction: row; gap: 20px; align-items: center;">
+            <label style="display: flex; gap: 8px; align-items: center; font-size: inherit; background: inherit; color: inherit;">
+                <input type="checkbox" checked> Checked
+            </label>
+            <label style="display: flex; gap: 8px; align-items: center; font-size: inherit; background: inherit; color: inherit;">
+                <input type="radio" name="r" checked> Option A
+            </label>
+            <label style="display: flex; gap: 8px; align-items: center; font-size: inherit; background: inherit; color: inherit;">
+                <input type="radio" name="r"> Option B
+            </label>
+            <select>
+                <option>Dropdown Option 1</option>
+                <option>Dropdown Option 2</option>
+                <option>Dropdown Option 3</option>
+            </select>
+        </div>
+    </section>
+
+    <section>
+        <h2>Range Slider</h2>
+        <div class="grid">
+            <input type="range" min="0" max="100" value="50">
+        </div>
+    </section>
+
+    <section>
+        <h2>Scrollbars</h2>
+        <div class="scroll-container">
+            <div class="scroll-content">
+                <p>Scroll horizontally and vertically to inspect the custom scrollbar UI tracks and thumbs.</p>
+                <p>This layout has been modified so the background seamlessly integrates into the rest of the application without hardcoded, breaking gradients.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque vel accumsan odio, non elementum neque. Curabitur quis leo sit amet est fringilla aliquet. Nulla facilisi.</p>
+                <div style="height: 150px; width: 100%;"></div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
