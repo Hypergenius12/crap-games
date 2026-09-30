@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Outer Billiards</title>
+  <link rel="stylesheet" href="styles.css?v=20260923-9">
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel">
+      <header>
+        <p class="kicker">Geometry lab</p>
+        <h1>Outer billiards</h1>
+        <p class="description">Each point is carried across a tangent point of the table. Color records the first return length; the pale web marks discontinuities.</p>
+      </header>
+      <section class="control-section" aria-label="Geometry">
+        <div class="section-label">Geometry</div>
+        <div class="mode-toggle" role="group" aria-label="Geometry model">
+          <button class="mode-button" type="button" data-mode="euclidean">Euclidean</button>
+          <button class="mode-button active" type="button" data-mode="hyperbolic">Hyperbolic disk</button>
+        </div>
+      </section>
+      <section class="control-section" aria-label="Table shape">
+        <div class="section-row"><span class="section-label">Table</span><span id="table-name" class="value">5 sides</span></div>
+        <div class="preset-row">
+          <button type="button" data-preset="triangle">3</button>
+          <button type="button" data-preset="square">4</button>
+          <button class="active" type="button" data-preset="pentagon">5</button>
+          <button type="button" data-preset="kite">kite</button>
+        </div>
+        <label class="range-label" for="sides"><span>Sides</span><output id="sides-out">5</output></label>
+        <input id="sides" type="range" min="3" max="12" step="1" value="5">
+        <label class="range-label" for="irregularity"><span>Irregularity</span><output id="irregularity-out">0%</output></label>
+        <input id="irregularity" type="range" min="0" max="100" step="1" value="0">
+        <label class="range-label" for="stretch"><span>Horizontal stretch</span><output id="stretch-out">1.00</output></label>
+        <input id="stretch" type="range" min=".60" max="1.55" step=".01" value="1">
+        <label class="range-label" for="shear"><span>Skew</span><output id="shear-out">0.00</output></label>
+        <input id="shear" type="range" min="-.65" max=".65" step=".01" value="0">
+        <label class="range-label" for="table-scale"><span>Table radius</span><output id="table-scale-out">1.00</output></label>
+        <input id="table-scale" type="range" min=".55" max="1.45" step=".01" value="1">
+        <label class="range-label" for="table-x"><span>Table position · x</span><output id="table-x-out">0.00</output></label>
+        <input id="table-x" type="range" min="-.18" max=".18" step=".01" value="0">
+        <label class="range-label" for="table-y"><span>Table position · y</span><output id="table-y-out">0.00</output></label>
+        <input id="table-y" type="range" min="-.18" max=".18" step=".01" value="0">
+        <label class="range-label" for="rotation"><span>Rotation</span><output id="rotation-out">0°</output></label>
+        <input id="rotation" type="range" min="0" max="360" step="1" value="0">
+        <label class="range-label" for="hyper-bend"><span>Hyperbolic side bend</span><output id="hyper-bend-out">100%</output></label>
+        <input id="hyper-bend" type="range" min="0" max="100" step="1" value="100">
+        <label class="range-label" for="table-glow"><span>Table aura</span><output id="table-glow-out">42%</output></label>
+        <input id="table-glow" type="range" min="0" max="100" step="1" value="42">
+      </section>
+      <section class="control-section" aria-label="Render controls">
+        <div class="section-label">Field</div>
+        <label class="range-label" for="iterations"><span>Return search</span><output id="iterations-out">120</output></label>
+        <input id="iterations" type="range" min="24" max="220" step="4" value="120">
+        <label class="range-label" for="resolution"><span>Resolution</span><output id="resolution-out">high</output></label>
+        <input id="resolution" type="range" min="1" max="4" step="1" value="3">
+        <label class="range-label" for="hue"><span>Palette shift</span><output id="hue-out">0°</output></label>
+        <input id="hue" type="range" min="0" max="360" step="1" value="0">
+        <label class="range-label" for="gradient"><span>Gradient</span><output id="gradient-out">65%</output></label>
+        <input id="gradient" type="range" min="0" max="100" step="1" value="65">
+        <label class="range-label" for="palette"><span>Color language</span></label>
+        <select id="palette" aria-label="Color language">
+          <option value="prism">Prism</option>
+          <option value="aurora">Aurora</option>
+          <option value="ocean">Abyssal</option>
+          <option value="ember">Ember</option>
+          <option value="violet">Ultraviolet</option>
+        </select>
+        <label class="range-label" for="contrast"><span>Color contrast</span><output id="contrast-out">72%</output></label>
+        <input id="contrast" type="range" min="15" max="100" step="1" value="72">
+        <label class="range-label" for="texture"><span>Cell texture</span><output id="texture-out">35%</output></label>
+        <input id="texture" type="range" min="0" max="100" step="1" value="35">
+        <label class="range-label" for="bloom"><span>Atmospheric bloom</span><output id="bloom-out">28%</output></label>
+        <input id="bloom" type="range" min="0" max="100" step="1" value="28">
+        <label class="range-label" for="web"><span>Web brightness</span><output id="web-out">82%</output></label>
+        <input id="web" type="range" min="0" max="100" step="1" value="82">
+        <label class="range-label" for="orbit-ink"><span>Orbit ink</span><output id="orbit-ink-out">58%</output></label>
+        <input id="orbit-ink" type="range" min="10" max="100" step="1" value="58">
+        <label class="range-label" for="rings"><span>Guide rings</span><output id="rings-out">4</output></label>
+        <input id="rings" type="range" min="0" max="8" step="1" value="4">
+        <label class="check-row"><input id="seams" type="checkbox" checked><span>Singularity rays and cell edges</span></label>
+        <label class="check-row"><input id="guides" type="checkbox" checked><span>Hyperbolic distance rings</span></label>
+      </section>
+      <footer>
+        <button class="reset" type="button" id="randomize">Surprise me</button>
+        <div class="view-actions"><button type="button" id="zoom-out">− zoom</button><button type="button" id="zoom-in">+ zoom</button></div>
+        <button class="reset subtle" type="button" id="reset-view">Reset view</button>
+        <button class="reset subtle" type="button" id="export-image">Export 4K PNG</button>
+        <p>Drag a vertex to reshape a convex table. Click outside it to draw one orbit. Scroll to zoom; Shift-drag or right-drag to pan.</p>
+      </footer>
+    </aside>
+    <main class="workspace">
+      <div class="canvas-wrap">
+        <canvas id="canvas" aria-label="Interactive outer billiards field"></canvas>
+        <div class="readout"><strong id="status">Hyperbolic disk · 5 sides</strong><span id="substatus">Rendering periodic cells…</span></div>
+        <div class="busy" id="busy">building field</div>
+        <div class="refine" id="refine" aria-live="polite"><span>detail</span><b id="detail-value">0%</b></div>
+        <div class="engine" id="engine">renderer · starting</div>
+        <div class="legend"><span>short return</span><i></i><span>long return</span></div>
+      </div>
+    </main>
+  </div>
+  <script src="app.js?v=20260923-9"></script>
+</body>
+</html>
