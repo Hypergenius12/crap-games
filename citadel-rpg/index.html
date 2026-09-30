@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Blackwood Citadel - RPG</title>
+    <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>The Blackwood Citadel</h1>
+            <div class="tracker">
+                <button id="map-btn" onclick="toggleMap()">View Floorplan</button>
+            </div>
+        </header>
+
+        <div id="main-layout">
+            <main>
+                <h2 id="room-name">Loading...</h2>
+                <div id="story-text">Loading story...</div>
+                
+                <div class="action-section">
+                    <h3>Actions</h3>
+                    <div id="choices-container"></div>
+                </div>
+
+                <div class="action-section">
+                    <h3>Navigation</h3>
+                    <div id="navigation-container"></div>
+                </div>
+            </main>
+
+            <aside id="sidebar">
+                <h3>Inventory</h3>
+                <ul id="inventory-list">
+                    <li class="empty-inv">Empty</li>
+                </ul>
+                <div id="item-description-box" class="hidden">
+                    <strong id="item-desc-name">Item Name</strong>
+                    <p id="item-desc-text">Item description goes here.</p>
+                </div>
+
+                <h3 style="margin-top: 30px;">Exploration Status</h3>
+                <div class="status-text">Rooms Discovered: <span id="rooms-count">0</span></div>
+                <div class="status-text">Secrets Found: <span id="secrets-count">0</span></div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="map-modal" class="hidden">
+        <div class="map-header">
+            <h2>Citadel Floorplan</h2>
+            <div id="level-tabs">
+                <!-- Injected dynamically -->
+            </div>
+            <button onclick="toggleMap()" class="close-btn">Close Map</button>
+        </div>
+        <div id="map-viewport">
+            <div id="map-plane">
+                <!-- Architectural rooms injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js?v=15"></script>
+</body>
+</html>
